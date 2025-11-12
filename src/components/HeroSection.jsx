@@ -77,6 +77,7 @@ const SlideBackground = styled.div`
   background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
     url(${(props) => props.bgImage});
   background-size: cover;
+  /*  */
   background-position: center center;
   background-repeat: no-repeat;
   opacity: ${(props) => (props.isActive ? 1 : 0)};
