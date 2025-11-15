@@ -67,7 +67,7 @@ const FooterTitle = styled(Title)`
       left: 0;
       width: 50px;
       height: 3px;
-      background: linear-gradient(45deg, #667eea, #764ba2);
+      background: linear-gradient(45deg, #da1701, #b81501);
       border-radius: 2px;
     }
   }
@@ -90,12 +90,12 @@ const ContactInfo = styled.div`
   transition: all 0.3s ease;
 
   &:hover {
-    color: #667eea;
+    color: #da1701;
     transform: translateX(5px);
   }
 
   .anticon {
-    color: #667eea;
+    color: #da1701;
     font-size: 1.2rem;
   }
 `;
@@ -121,10 +121,10 @@ const SocialButton = styled(Button)`
 
     &:hover {
       transform: translateY(-5px) scale(1.1);
-      border-color: #667eea;
-      background: rgba(102, 126, 234, 0.2);
+      border-color: #da1701;
+      background: rgba(218, 23, 1, 0.2);
       color: #fff;
-      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+      box-shadow: 0 10px 30px rgba(218, 23, 1, 0.3);
     }
 
     &.facebook:hover {
@@ -172,15 +172,15 @@ const NewsletterInput = styled(Input)`
 
     &:hover,
     &:focus {
-      border-color: #667eea;
-      box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
+      border-color: #da1701;
+      box-shadow: 0 0 15px rgba(218, 23, 1, 0.3);
     }
   }
 `;
 
 const SubscribeButton = styled(Button)`
   &.ant-btn {
-    background: linear-gradient(45deg, #667eea, #764ba2);
+    background: linear-gradient(45deg, #da1701, #b81501);
     border: none;
     color: #fff;
     border-radius: 25px;
@@ -208,7 +208,7 @@ const QuickLink = styled.a`
   position: relative;
 
   &:hover {
-    color: #667eea;
+    color: #da1701;
     transform: translateX(10px);
 
     &::before {
@@ -224,7 +224,7 @@ const QuickLink = styled.a`
     transform: translateY(-50%);
     width: 0;
     height: 2px;
-    background: #667eea;
+    background: #da1701;
     transition: width 0.3s ease;
   }
 `;
@@ -258,11 +258,11 @@ const BackToTop = styled(Button)`
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: linear-gradient(45deg, #667eea, #764ba2);
+    background: linear-gradient(45deg, #da1701, #b81501);
     border: none;
     color: #fff;
     font-size: 1.2rem;
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 8px 25px rgba(218, 23, 1, 0.3);
     transition: all 0.3s ease;
     z-index: 1000;
 

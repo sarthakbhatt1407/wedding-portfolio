@@ -48,7 +48,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(45deg, #667eea, #764ba2);
+  background: linear-gradient(45deg, #da1701, #b81501);
   border-radius: 10px;
 }
 
@@ -228,7 +228,7 @@ body {
 
 /* Gradient text animation */
 .gradient-text {
-  background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #f5576c);
+  background: linear-gradient(45deg, #da1701, #b81501, #f093fb, #f5576c);
   background-size: 300% 300%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -251,7 +251,7 @@ body {
 /* Loading animation */
 .loading-spinner {
   border: 4px solid #f3f3f3;
-  border-top: 4px solid #667eea;
+  border-top: 4px solid #da1701;
   border-radius: 50%;
   width: 40px;
   height: 40px;
@@ -509,7 +509,7 @@ body {
 
 /* Focus improvements for accessibility */
 *:focus-visible {
-  outline: 2px solid #d4af37;
+  outline: 2px solid #da1701;
   outline-offset: 2px;
 }
 

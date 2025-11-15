@@ -328,14 +328,14 @@ const StyledButton = styled(Button)`
     }
 
     &.primary {
-      background: linear-gradient(45deg, #667eea, #764ba2);
+      background: linear-gradient(45deg, #da1701, #b81501);
       border-color: transparent;
 
       &:hover {
         background: #fff;
-        color: #667eea;
+        color: #da1701;
         transform: translateY(-3px);
-        box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 15px 35px rgba(218, 23, 1, 0.4);
       }
     }
 
@@ -374,7 +374,7 @@ const Dot = styled.div`
   border-radius: 6px;
   background: ${(props) =>
     props.isActive
-      ? "linear-gradient(45deg, #667eea, #764ba2)"
+      ? "linear-gradient(45deg, #DA1701, #B81501)"
       : "rgba(255, 255, 255, 0.4)"};
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   cursor: pointer;
@@ -397,7 +397,7 @@ const Dot = styled.div`
   &:hover {
     background: ${(props) =>
       props.isActive
-        ? "linear-gradient(45deg, #667eea, #764ba2)"
+        ? "linear-gradient(45deg, #DA1701, #B81501)"
         : "rgba(255, 255, 255, 0.7)"};
     transform: scale(1.2);
     box-shadow: 0 4px 16px rgba(255, 255, 255, 0.2);
@@ -419,7 +419,7 @@ const ProgressBar = styled.div`
   bottom: 0;
   left: 0;
   height: 3px;
-  background: linear-gradient(45deg, #667eea, #764ba2);
+  background: linear-gradient(45deg, #da1701, #b81501);
   width: ${(props) => ((props.currentSlide + 1) / props.totalSlides) * 100}%;
   transition: width 0.3s ease;
   z-index: 10;

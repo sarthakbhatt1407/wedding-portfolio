@@ -101,14 +101,14 @@ const PricingCard = styled(Card)`
 
     &.featured {
       box-shadow: 0 20px 50px rgba(212, 175, 55, 0.2);
-      border: 2px solid #d4af37;
+      border: 2px solid #da1701;
 
       &::before {
         content: "Most Popular";
         position: absolute;
         top: 15px;
         right: -25px;
-        background: linear-gradient(135deg, #d4af37, #f1c40f);
+        background: linear-gradient(135deg, #da1701, #b81501);
         color: #fff;
         padding: 6px 35px;
         font-size: 0.7rem;
@@ -126,14 +126,14 @@ const PricingCard = styled(Card)`
 
     &.custom {
       background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-      border: 2px solid #667eea;
+      border: 2px solid #da1701;
 
       &::before {
         content: "Fully Customizable";
         position: absolute;
         top: 15px;
         right: -35px;
-        background: linear-gradient(135deg, #667eea, #764ba2);
+        background: linear-gradient(135deg, #da1701, #b81501);
         color: #fff;
         padding: 6px 45px;
         font-size: 0.7rem;
@@ -181,7 +181,7 @@ const PlanName = styled(Title)`
 const PlanPrice = styled.div`
   font-size: 2.2rem;
   font-weight: 700;
-  color: #d4af37;
+  color: #da1701;
   margin-bottom: 5px;
   font-family: "Playfair Display", serif;
   line-height: 1.1;
@@ -277,7 +277,7 @@ const FeatureList = styled(List)`
     min-width: 0;
 
     .anticon {
-      color: #d4af37;
+      color: #da1701;
       margin-right: 10px;
       font-size: 0.95rem;
       flex-shrink: 0;
@@ -313,9 +313,9 @@ const PricingButton = styled(Button)`
   &.ant-btn {
     width: 90%;
     height: 45px;
-    border: 2px solid #d4af37;
+    border: 2px solid #da1701;
     background: transparent;
-    color: #d4af37;
+    color: #da1701;
     font-weight: 600;
     font-size: 0.85rem;
     text-transform: uppercase;
@@ -324,33 +324,33 @@ const PricingButton = styled(Button)`
     transition: all 0.3s ease;
     margin-top: 20px;
     &:hover {
-      background: #d4af37;
+      background: #da1701;
       color: #fff;
-      border-color: #d4af37;
+      border-color: #da1701;
       transform: translateY(-2px);
       box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
     }
 
     &.featured {
-      background: #d4af37;
+      background: #da1701;
       color: #fff;
 
       &:hover {
-        background: #f1c40f;
-        border-color: #f1c40f;
+        background: #b81501;
+        border-color: #b81501;
       }
     }
 
     &.custom-btn {
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      border: 2px solid #667eea;
+      background: linear-gradient(135deg, #da1701, #b81501);
+      border: 2px solid #da1701;
       color: #fff;
 
       &:hover {
-        background: linear-gradient(135deg, #5a6fd8, #6a4190);
-        border-color: #5a6fd8;
+        background: linear-gradient(135deg, #b81501, #a01301);
+        border-color: #b81501;
         transform: translateY(-2px);
-        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 10px 30px rgba(218, 23, 1, 0.4);
       }
     }
 
@@ -368,7 +368,7 @@ const StyledModal = styled(Modal)`
   }
 
   .ant-modal-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #da1701 0%, #b81501 100%);
     border: none;
 
     .ant-modal-title {
@@ -414,8 +414,8 @@ const StyledForm = styled(Form)`
 
     &:hover,
     &:focus {
-      border-color: #667eea;
-      box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+      border-color: #da1701;
+      box-shadow: 0 0 0 2px rgba(218, 23, 1, 0.1);
     }
   }
 `;
@@ -424,7 +424,7 @@ const SubmitButton = styled(Button)`
   &.ant-btn {
     width: 100%;
     height: 45px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #da1701 0%, #b81501 100%);
     border: none;
     border-radius: 8px;
     color: #fff;
@@ -432,7 +432,7 @@ const SubmitButton = styled(Button)`
     font-size: 1rem;
 
     &:hover {
-      background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+      background: linear-gradient(135deg, #b81501 0%, #a01301 100%);
       transform: translateY(-1px);
       box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
     }

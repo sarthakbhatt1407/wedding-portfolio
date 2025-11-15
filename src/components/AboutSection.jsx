@@ -187,7 +187,7 @@ const PlayButton = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 2rem;
-  color: #d4af37;
+  color: #DA1701;
   cursor: pointer;
   z-index: 2;
   transition: all 0.4s ease;
@@ -208,7 +208,7 @@ const PlayButton = styled.div`
 
   &:hover {
     transform: translate(-50%, -50%) scale(1.1);
-    background: #d4af37;
+    background: #DA1701;
     color: #fff;
     box-shadow: 0 15px 40px rgba(212, 175, 55, 0.4);
   }
@@ -240,7 +240,7 @@ const SectionTitle = styled.h2`
     left: 0;
     width: 60px;
     height: 4px;
-    background: linear-gradient(135deg, #d4af37, #f1c40f);
+    background: linear-gradient(135deg, #DA1701, #B81501);
     border-radius: 2px;
   }
 
@@ -301,7 +301,7 @@ const StatItem = styled.div`
 const StatNumber = styled.div`
   font-size: 2.5rem;
   font-weight: 700;
-  color: #d4af37;
+  color: #DA1701;
   margin-bottom: 10px;
   font-family: "Playfair Display", serif;
 `;
@@ -316,7 +316,7 @@ const StatLabel = styled.div`
 
 const CTAButton = styled(Button)`
   &.ant-btn {
-    background: linear-gradient(135deg, #d4af37, #f1c40f);
+    background: linear-gradient(135deg, #DA1701, #B81501);
     border: none;
     height: 60px;
     padding: 0 40px;
@@ -332,7 +332,7 @@ const CTAButton = styled(Button)`
     &:hover {
       transform: translateY(-3px);
       box-shadow: 0 20px 40px rgba(212, 175, 55, 0.4);
-      background: linear-gradient(135deg, #f1c40f, #d4af37);
+      background: linear-gradient(135deg, #B81501, #DA1701);
       color: #fff;
     }
 
@@ -390,7 +390,7 @@ const FeatureBox = styled.div`
 const FeatureIcon = styled.div`
   width: 90px;
   height: 90px;
-  background: linear-gradient(135deg, #d4af37, #f1c40f);
+  background: linear-gradient(135deg, #DA1701, #B81501);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -427,7 +427,7 @@ const FeatureIcon = styled.div`
 
   ${FeatureBox}:hover & {
     transform: scale(1.1) rotateY(360deg);
-    background: linear-gradient(135deg, #f1c40f, #d4af37);
+    background: linear-gradient(135deg, #B81501, #DA1701);
     box-shadow: 0 15px 40px rgba(212, 175, 55, 0.4);
 
     &::after {
@@ -496,7 +496,7 @@ const AboutSection = () => {
           <ContentSection>
             <SectionTitle>
               Creating Beautiful{" "}
-              <span style={{ color: "#d4af37", fontStyle: "italic" }}>
+              <span style={{ color: "#DA1701", fontStyle: "italic" }}>
                 Wedding Stories
               </span>
             </SectionTitle>

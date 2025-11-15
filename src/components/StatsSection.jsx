@@ -13,7 +13,7 @@ const { Title } = Typography;
 
 const StatsContainer = styled.section`
   padding: 100px 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #da1701 0%, #b81501 100%);
   position: relative;
   overflow: hidden;
 

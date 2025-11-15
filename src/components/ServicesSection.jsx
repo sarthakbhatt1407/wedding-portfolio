@@ -96,7 +96,7 @@ const SectionTitle = styled(Title)`
       transform: translateX(-50%);
       width: 80px;
       height: 4px;
-      background: linear-gradient(135deg, #d4af37, #f1c40f);
+      background: linear-gradient(135deg, #DA1701, #B81501);
       border-radius: 2px;
     }
 
@@ -178,7 +178,7 @@ const ServiceCard = styled(Card)`
 const ServiceIcon = styled.div`
   width: 100px;
   height: 100px;
-  background: linear-gradient(135deg, #d4af37, #f1c40f);
+  background: linear-gradient(135deg, #DA1701, #B81501);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -204,7 +204,7 @@ const ServiceIcon = styled.div`
 
   ${ServiceCard}:hover & {
     transform: scale(1.2) rotateY(360deg);
-    background: linear-gradient(135deg, #f1c40f, #d4af37);
+    background: linear-gradient(135deg, #B81501, #DA1701);
     box-shadow: 0 25px 50px rgba(212, 175, 55, 0.5);
 
     &::before {
@@ -233,7 +233,7 @@ const ServiceTitle = styled(Title)`
   }
 
   ${ServiceCard}:hover & {
-    color: #d4af37 !important;
+    color: #DA1701 !important;
   }
 `;
 
@@ -267,7 +267,7 @@ const ServiceFeatures = styled.ul`
     transition: all 0.3s ease;
 
     .anticon {
-      color: #d4af37;
+      color: #DA1701;
       margin-right: 10px;
       font-size: 1rem;
     }
@@ -282,8 +282,8 @@ const ServiceFeatures = styled.ul`
 const ServiceButton = styled(Button)`
   &.ant-btn {
     background: transparent;
-    border: 2px solid #d4af37;
-    color: #d4af37;
+    border: 2px solid #DA1701;
+    color: #DA1701;
     height: 45px;
     padding: 0 30px;
     border-radius: 25px;
@@ -302,14 +302,14 @@ const ServiceButton = styled(Button)`
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(135deg, #d4af37, #f1c40f);
+      background: linear-gradient(135deg, #DA1701, #B81501);
       transition: left 0.4s ease;
       z-index: -1;
     }
 
     &:hover {
       color: #fff;
-      border-color: #d4af37;
+      border-color: #DA1701;
       transform: translateY(-2px);
       box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
 

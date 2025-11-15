@@ -135,7 +135,7 @@ const StyledTextArea = styled(TextArea)`
 
 const SubmitButton = styled(Button)`
   &.ant-btn {
-    background: linear-gradient(135deg, #4a90a4, #2c5f75);
+    background: linear-gradient(135deg, #DA1701, #B81501);
     border: none;
     color: #fff;
     padding: 12px 40px;
@@ -148,9 +148,9 @@ const SubmitButton = styled(Button)`
     transition: all 0.3s ease;
 
     &:hover {
-      background: linear-gradient(135deg, #2c5f75, #1a3d47);
+      background: linear-gradient(135deg, #B81501, #A01301);
       transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(74, 144, 164, 0.3);
+      box-shadow: 0 10px 30px rgba(218, 23, 1, 0.3);
     }
   }
 `;

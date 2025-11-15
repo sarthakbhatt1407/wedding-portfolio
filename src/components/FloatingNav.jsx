@@ -73,7 +73,7 @@ const Logo = styled.div`
 
   &:hover {
     color: ${(props) =>
-      props.isInHero ? "rgba(255, 255, 255, 0.8)" : "#d4af37"};
+      props.isInHero ? "rgba(255, 255, 255, 0.8)" : "#DA1701"};
     transform: scale(1.05);
   }
 
@@ -130,7 +130,7 @@ const NavItem = styled.a`
 
   &:hover {
     color: ${(props) =>
-      props.isInHero ? "rgba(255, 255, 255, 0.8)" : "#d4af37"};
+      props.isInHero ? "rgba(255, 255, 255, 0.8)" : "#DA1701"};
     transform: translateY(-2px);
   }
 
@@ -151,7 +151,7 @@ const NavItem = styled.a`
     left: 50%;
     width: 0;
     height: 2px;
-    background: ${(props) => (props.isInHero ? "#fff" : "#d4af37")};
+    background: ${(props) => (props.isInHero ? "#fff" : "#DA1701")};
     transition: all 0.3s ease;
     transform: translateX(-50%);
     box-shadow: ${(props) =>
@@ -271,7 +271,7 @@ const ContactButton = styled(Button)`
     background: ${(props) =>
       props.isInHero
         ? "rgba(255, 255, 255, 0.15)"
-        : "linear-gradient(45deg, #DA1701, #f1c40f)"};
+        : "linear-gradient(45deg, #DA1701, #B81501)"};
     border: ${(props) =>
       props.isInHero ? "2px solid rgba(255, 255, 255, 0.4)" : "none"};
     color: #fff;
@@ -299,7 +299,7 @@ const ContactButton = styled(Button)`
       background: ${(props) =>
         props.isInHero
           ? "rgba(255, 255, 255, 0.25)"
-          : "linear-gradient(45deg, #f1c40f, #DA1701)"};
+          : "linear-gradient(45deg, #B81501, #DA1701)"};
     }
 
     @media (max-width: 768px) {
