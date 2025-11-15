@@ -17,8 +17,11 @@ jobs:
         with:
           node-version: "18" # adjust if you use a different Node
 
+      - name: Clear npm cache
+        run: npm cache clean --force
+
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build production
         run: npm run build
