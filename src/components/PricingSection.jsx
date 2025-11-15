@@ -132,15 +132,15 @@ const PricingCard = styled(Card)`
     }
 
     &.featured {
-      box-shadow: 0 20px 50px rgba(218, 23, 1, 0.2);
-      border: 2px solid #DA1701;
+      box-shadow: 0 20px 50px rgba(212, 175, 55, 0.2);
+      border: 2px solid #d4af37;
 
       &::before {
         content: "Most Popular";
         position: absolute;
         top: 15px;
         right: -25px;
-        background: linear-gradient(135deg, #DA1701, #FF4500);
+        background: linear-gradient(135deg, #d4af37, #f1c40f);
         color: #fff;
         padding: 6px 35px;
         font-size: 0.7rem;
@@ -158,14 +158,14 @@ const PricingCard = styled(Card)`
 
     &.custom {
       background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-      border: 2px solid #DA1701;
+      border: 2px solid #667eea;
 
       &::before {
         content: "Fully Customizable";
         position: absolute;
         top: 15px;
         right: -35px;
-        background: linear-gradient(135deg, #DA1701, #FF4500);
+        background: linear-gradient(135deg, #667eea, #764ba2);
         color: #fff;
         padding: 6px 45px;
         font-size: 0.7rem;
@@ -213,7 +213,7 @@ const PlanName = styled(Title)`
 const PlanPrice = styled.div`
   font-size: 2.2rem;
   font-weight: 700;
-  color: #DA1701;
+  color: #d4af37;
   margin-bottom: 5px;
   font-family: "Playfair Display", serif;
   line-height: 1.1;
@@ -309,7 +309,7 @@ const FeatureList = styled(List)`
     min-width: 0;
 
     .anticon {
-      color: #DA1701;
+      color: #d4af37;
       margin-right: 10px;
       font-size: 0.95rem;
       flex-shrink: 0;
@@ -345,9 +345,9 @@ const PricingButton = styled(Button)`
   &.ant-btn {
     width: 90%;
     height: 45px;
-    border: 2px solid #DA1701;
+    border: 2px solid #d4af37;
     background: transparent;
-    color: #DA1701;
+    color: #d4af37;
     font-weight: 600;
     font-size: 0.85rem;
     text-transform: uppercase;
@@ -356,33 +356,33 @@ const PricingButton = styled(Button)`
     transition: all 0.3s ease;
     margin-top: 20px;
     &:hover {
-      background: #DA1701;
+      background: #d4af37;
       color: #fff;
-      border-color: #DA1701;
+      border-color: #d4af37;
       transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(218, 23, 1, 0.3);
+      box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
     }
 
     &.featured {
-      background: #DA1701;
+      background: #d4af37;
       color: #fff;
 
       &:hover {
-        background: #B81501;
-        border-color: #B81501;
+        background: #f1c40f;
+        border-color: #f1c40f;
       }
     }
 
     &.custom-btn {
-      background: linear-gradient(135deg, #DA1701, #B81501);
-      border: 2px solid #DA1701;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border: 2px solid #667eea;
       color: #fff;
 
       &:hover {
-        background: linear-gradient(135deg, #B81501, #A01301);
-        border-color: #B81501;
+        background: linear-gradient(135deg, #5a6fd8, #6a4190);
+        border-color: #5a6fd8;
         transform: translateY(-2px);
-        box-shadow: 0 10px 30px rgba(218, 23, 1, 0.4);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
       }
     }
 
@@ -425,7 +425,7 @@ const CustomPlanName = styled(PlanName)`
 `;
 
 const CustomPlanPrice = styled(PlanPrice)`
-  color: #DA1701;
+  color: #d4af37;
 `;
 
 const CustomFeatureList = styled(FeatureList)`
@@ -433,21 +433,21 @@ const CustomFeatureList = styled(FeatureList)`
     color: #333;
 
     .anticon {
-      color: #DA1701;
+      color: #d4af37;
     }
   }
 `;
 
 const CustomButton = styled(PricingButton)`
   &.ant-btn {
-    background: linear-gradient(135deg, #DA1701, #B81501);
+    background: linear-gradient(135deg, #d4af37, #f1c40f);
     border: 2px solid transparent;
     color: #fff;
 
     &:hover {
-      background: linear-gradient(135deg, #B81501, #A01301);
+      background: linear-gradient(135deg, #f1c40f, #d4af37);
       transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(218, 23, 1, 0.4);
+      box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
     }
   }
 `;
@@ -459,7 +459,7 @@ const StyledModal = styled(Modal)`
   }
 
   .ant-modal-header {
-    background: linear-gradient(135deg, #DA1701 0%, #B81501 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: none;
 
     .ant-modal-title {
@@ -505,8 +505,8 @@ const StyledForm = styled(Form)`
 
     &:hover,
     &:focus {
-      border-color: #DA1701;
-      box-shadow: 0 0 0 2px rgba(218, 23, 1, 0.1);
+      border-color: #667eea;
+      box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
     }
   }
 `;
@@ -515,7 +515,7 @@ const SubmitButton = styled(Button)`
   &.ant-btn {
     width: 100%;
     height: 45px;
-    background: linear-gradient(135deg, #DA1701 0%, #B81501 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: none;
     border-radius: 8px;
     color: #fff;
@@ -523,9 +523,9 @@ const SubmitButton = styled(Button)`
     font-size: 1rem;
 
     &:hover {
-      background: linear-gradient(135deg, #B81501 0%, #A01301 100%);
+      background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
       transform: translateY(-1px);
-      box-shadow: 0 5px 15px rgba(218, 23, 1, 0.3);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
     }
   }
 `;

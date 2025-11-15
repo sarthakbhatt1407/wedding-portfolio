@@ -193,9 +193,9 @@ const MobileMenuButton = styled(Button)`
         props.isInHero
           ? "rgba(255, 255, 255, 0.2)"
           : "rgba(212, 175, 55, 0.2)"};
-      color: ${(props) => (props.isInHero ? "#fff" : "#d4af37")};
+      color: ${(props) => (props.isInHero ? "#fff" : "#DA1701")};
       border-color: ${(props) =>
-        props.isInHero ? "rgba(255, 255, 255, 0.5)" : "#d4af37"};
+        props.isInHero ? "rgba(255, 255, 255, 0.5)" : "#DA1701"};
       transform: scale(1.05);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
@@ -251,7 +251,7 @@ const MobileMenuHeader = styled.div`
 `;
 
 const MobileMenuTitle = styled.h3`
-  color: #d4af37;
+  color: #da1701;
   font-family: "Playfair Display", serif;
   font-size: 1.8rem;
   font-weight: 600;
@@ -261,7 +261,7 @@ const MobileMenuTitle = styled.h3`
 const CloseButton = styled.button`
   background: transparent;
   border: 2px solid rgba(212, 175, 55, 0.3);
-  color: #d4af37;
+  color: #da1701;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -273,7 +273,7 @@ const CloseButton = styled.button`
 
   &:hover {
     background: rgba(212, 175, 55, 0.1);
-    border-color: #d4af37;
+    border-color: #da1701;
     transform: rotate(90deg);
   }
 `;
@@ -292,13 +292,13 @@ const MobileMenuItem = styled.div`
   ${(props) =>
     props.isActive &&
     `
-    color: #d4af37;
+    color: #DA1701;
     background: rgba(212, 175, 55, 0.1);
-    border-left-color: #d4af37;
+    border-left-color: #DA1701;
   `}
 
   &:hover {
-    color: #d4af37;
+    color: #da1701;
     background: rgba(212, 175, 55, 0.05);
     padding-left: 35px;
   }
@@ -309,7 +309,7 @@ const ContactButton = styled(Button)`
     background: ${(props) =>
       props.isInHero
         ? "rgba(255, 255, 255, 0.15)"
-        : "linear-gradient(45deg, #d4af37, #f1c40f)"};
+        : "linear-gradient(45deg, #DA1701, #f1c40f)"};
     border: ${(props) =>
       props.isInHero ? "2px solid rgba(255, 255, 255, 0.4)" : "none"};
     color: #fff;
@@ -337,7 +337,7 @@ const ContactButton = styled(Button)`
       background: ${(props) =>
         props.isInHero
           ? "rgba(255, 255, 255, 0.25)"
-          : "linear-gradient(45deg, #f1c40f, #d4af37)"};
+          : "linear-gradient(45deg, #f1c40f, #DA1701)"};
     }
 
     @media (max-width: 768px) {
