@@ -7,7 +7,7 @@ import HeroSection from "../components/HeroSection";
 import AboutSection from "../components/AboutSection";
 import PortfolioSection from "../components/PortfolioSection";
 import VideoSection from "../components/VideoSection";
-import StatsSection from "../components/StatsSection";
+
 import TeamSection from "../components/TeamSection";
 import ServicesSection from "../components/ServicesSection";
 import TestimonialsSection from "../components/TestimonialsSection";

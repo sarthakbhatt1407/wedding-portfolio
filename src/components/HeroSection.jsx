@@ -1,10 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Layout, Typography, Button, Space } from "antd";
-import {
-  PlayCircleOutlined,
-  LeftOutlined,
-  RightOutlined,
-} from "@ant-design/icons";
+import { PlayCircleOutlined } from "@ant-design/icons";
 import styled, { keyframes } from "styled-components";
 
 const { Content } = Layout;
@@ -366,73 +362,6 @@ const SliderNavigation = styled.div`
   }
 `;
 
-const NavButton = styled(Button)`
-  &.ant-btn {
-    width: 54px;
-    height: 54px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(20px);
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    position: relative;
-    overflow: hidden;
-
-    &::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(
-        45deg,
-        rgba(102, 126, 234, 0.3),
-        rgba(118, 75, 162, 0.3)
-      );
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      border-radius: 50%;
-    }
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
-      transform: scale(1.1) translateY(-2px);
-      box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
-
-      &::before {
-        opacity: 1;
-      }
-    }
-
-    &:active {
-      transform: scale(0.98);
-    }
-
-    &:disabled {
-      opacity: 0.5;
-      pointer-events: none;
-    }
-
-    .anticon {
-      font-size: 1.1rem;
-      position: relative;
-      z-index: 1;
-    }
-
-    @media (max-width: 768px) {
-      width: 48px;
-      height: 48px;
-
-      .anticon {
-        font-size: 1rem;
-      }
-    }
-  }
-`;
-
 const SliderDots = styled.div`
   display: flex;
   gap: 12px;
@@ -579,21 +508,13 @@ const HeroSection = () => {
     },
   ];
 
-  const nextSlide = () => {
+  const nextSlide = useCallback(() => {
     if (!isAnimating) {
       setIsAnimating(true);
       setCurrentSlide((prev) => (prev + 1) % slides.length);
       setTimeout(() => setIsAnimating(false), 1000);
     }
-  };
-
-  const prevSlide = () => {
-    if (!isAnimating) {
-      setIsAnimating(true);
-      setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-      setTimeout(() => setIsAnimating(false), 1000);
-    }
-  };
+  }, [isAnimating, slides.length]);
 
   const goToSlide = (index) => {
     if (!isAnimating && index !== currentSlide) {
@@ -609,7 +530,7 @@ const HeroSection = () => {
     }, 6000);
 
     return () => clearInterval(interval);
-  }, [isAnimating]);
+  }, [nextSlide]);
 
   const currentSlideData = slides[currentSlide];
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, Col, Typography, Button } from "antd";
+import { Typography, Button } from "antd";
 import { PlayCircleOutlined } from "@ant-design/icons";
 import styled from "styled-components";
 

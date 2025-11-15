@@ -12,7 +12,7 @@ import {
   DatePicker,
   message,
 } from "antd";
-import { CheckOutlined, StarOutlined } from "@ant-design/icons";
+import { CheckOutlined } from "@ant-design/icons";
 import styled from "styled-components";
 
 const { Title, Paragraph } = Typography;
@@ -26,38 +26,6 @@ const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
-`;
-
-const PriceListImageContainer = styled.div`
-  text-align: center;
-  margin: 40px 0 80px 0;
-  padding: 30px;
-  background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
-`;
-
-const PriceListImage = styled.img`
-  width: 100%;
-  max-width: 900px;
-  height: auto;
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  transition: transform 0.3s ease;
-
-  &:hover {
-    transform: scale(1.02);
-  }
-`;
-
-const ImageTitle = styled(Title)`
-  &.ant-typography {
-    font-size: 2rem !important;
-    font-weight: 400 !important;
-    margin-bottom: 30px !important;
-    color: #333 !important;
-    font-family: "Playfair Display", serif !important;
-  }
 `;
 
 const SectionTitle = styled(Title)`
@@ -393,65 +361,6 @@ const PricingButton = styled(Button)`
   }
 `;
 
-const CustomCard = styled(PricingCard)`
-  &.ant-card {
-    background: #fff;
-    color: #333;
-    height: 550px;
-
-    .ant-card-body {
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      justify-content: space-between;
-    }
-
-    &:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
-    }
-
-    @media (max-width: 768px) {
-      height: auto;
-      min-height: 450px;
-    }
-  }
-`;
-const CustomPlanName = styled(PlanName)`
-  &.ant-typography {
-    color: #333 !important;
-  }
-`;
-
-const CustomPlanPrice = styled(PlanPrice)`
-  color: #d4af37;
-`;
-
-const CustomFeatureList = styled(FeatureList)`
-  .ant-list-item {
-    color: #333;
-
-    .anticon {
-      color: #d4af37;
-    }
-  }
-`;
-
-const CustomButton = styled(PricingButton)`
-  &.ant-btn {
-    background: linear-gradient(135deg, #d4af37, #f1c40f);
-    border: 2px solid transparent;
-    color: #fff;
-
-    &:hover {
-      background: linear-gradient(135deg, #f1c40f, #d4af37);
-      transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
-    }
-  }
-`;
-
 const StyledModal = styled(Modal)`
   .ant-modal-content {
     border-radius: 20px;
@@ -773,7 +682,7 @@ const PricingSection = () => {
               rules={[
                 { required: true, message: "Please enter your phone number" },
                 {
-                  pattern: /^[\+]?[1-9][\d]{0,15}$/,
+                  pattern: /^[+]?[1-9][\d]{0,15}$/,
                   message: "Please enter a valid phone number",
                 },
               ]}

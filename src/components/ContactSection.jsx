@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, Col, Typography, Form, Input, Button, Space } from "antd";
+import { Row, Col, Typography, Form, Input, Button } from "antd";
 import {
   MailOutlined,
   PhoneOutlined,

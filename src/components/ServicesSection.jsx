@@ -36,15 +36,6 @@ const pulse = keyframes`
   }
 `;
 
-const shimmer = keyframes`
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-`;
-
 const ServicesContainer = styled.section`
   padding: 120px 0;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);

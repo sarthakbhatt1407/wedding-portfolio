@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, Col, Typography, Image, Button, Space } from "antd";
+import { Typography, Image, Button, Space } from "antd";
 import {
   InstagramOutlined,
   FacebookOutlined,

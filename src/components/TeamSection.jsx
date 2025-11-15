@@ -6,7 +6,6 @@ import {
   TwitterOutlined,
   MailOutlined,
   PhoneOutlined,
-  CameraOutlined,
 } from "@ant-design/icons";
 import styled, { keyframes } from "styled-components";
 

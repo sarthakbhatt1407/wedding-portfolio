@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Button } from "antd";
 import {
   MenuOutlined,
-  CloseOutlined,
   HomeOutlined,
   UserOutlined,
   CameraOutlined,
@@ -239,43 +238,6 @@ const MobileMenuSlider = styled.div`
   transition: transform 0.3s ease;
   padding: 80px 0 40px 0;
   box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
-`;
-
-const MobileMenuHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-  padding-bottom: 20px;
-  border-bottom: 2px solid rgba(212, 175, 55, 0.3);
-`;
-
-const MobileMenuTitle = styled.h3`
-  color: #da1701;
-  font-family: "Playfair Display", serif;
-  font-size: 1.8rem;
-  font-weight: 600;
-  margin: 0;
-`;
-
-const CloseButton = styled.button`
-  background: transparent;
-  border: 2px solid rgba(212, 175, 55, 0.3);
-  color: #da1701;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: rgba(212, 175, 55, 0.1);
-    border-color: #da1701;
-    transform: rotate(90deg);
-  }
 `;
 
 const MobileMenuItem = styled.div`

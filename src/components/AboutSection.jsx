@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, Col, Typography, Space, Button } from "antd";
+import { Row, Col, Typography, Button } from "antd";
 import {
   PlayCircleOutlined,
   HeartOutlined,
