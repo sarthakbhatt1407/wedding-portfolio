@@ -19,13 +19,45 @@ const { Title, Paragraph } = Typography;
 
 const PricingContainer = styled.section`
   padding: 120px 0;
-  background: #f8f9fa;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
 `;
 
 const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
+`;
+
+const PriceListImageContainer = styled.div`
+  text-align: center;
+  margin: 40px 0 80px 0;
+  padding: 30px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+`;
+
+const PriceListImage = styled.img`
+  width: 100%;
+  max-width: 900px;
+  height: auto;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.02);
+  }
+`;
+
+const ImageTitle = styled(Title)`
+  &.ant-typography {
+    font-size: 2rem !important;
+    font-weight: 400 !important;
+    margin-bottom: 30px !important;
+    color: #333 !important;
+    font-family: "Playfair Display", serif !important;
+  }
 `;
 
 const SectionTitle = styled(Title)`
@@ -61,68 +93,54 @@ const PricingCard = styled(Card)`
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
-    text-align: center;
-    height: 550px;
+    margin-bottom: 30px;
     position: relative;
     overflow: hidden;
     display: flex;
     flex-direction: column;
 
     .ant-card-body {
-      padding: 40px 30px;
+      padding: 40px;
       display: flex;
-      flex-direction: column;
-      height: 100%;
+      flex-direction: row;
+      align-items: center;
       justify-content: space-between;
     }
 
     @media (max-width: 1200px) {
-      height: 520px;
-
       .ant-card-body {
-        padding: 35px 25px;
-      }
-    }
-
-    @media (max-width: 992px) {
-      height: 500px;
-
-      .ant-card-body {
-        padding: 30px 20px;
+        padding: 35px;
+        flex-direction: column;
+        text-align: center;
       }
     }
 
     @media (max-width: 768px) {
-      height: auto;
-      min-height: 450px;
-
       .ant-card-body {
-        padding: 25px 20px;
+        padding: 25px;
+        flex-direction: column;
+        text-align: center;
       }
     }
 
     @media (max-width: 576px) {
-      min-height: 400px;
-
       .ant-card-body {
-        padding: 20px 15px;
+        padding: 20px;
+        flex-direction: column;
+        text-align: center;
       }
     }
 
-    @media (max-width: 480px) {
-      min-height: 380px;
-    }
-
     &.featured {
-      box-shadow: 0 20px 50px rgba(212, 175, 55, 0.2);
-      border: 2px solid #d4af37;
+      box-shadow: 0 20px 50px rgba(218, 23, 1, 0.2);
+      border: 2px solid #DA1701;
 
       &::before {
         content: "Most Popular";
         position: absolute;
         top: 15px;
         right: -25px;
-        background: linear-gradient(135deg, #d4af37, #f1c40f);
+        background: linear-gradient(135deg, #DA1701, #FF4500);
         color: #fff;
         padding: 6px 35px;
         font-size: 0.7rem;
@@ -134,6 +152,31 @@ const PricingCard = styled(Card)`
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         border-radius: 2px;
         width: 120px;
+        text-align: center;
+      }
+    }
+
+    &.custom {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border: 2px solid #DA1701;
+
+      &::before {
+        content: "Fully Customizable";
+        position: absolute;
+        top: 15px;
+        right: -35px;
+        background: linear-gradient(135deg, #DA1701, #FF4500);
+        color: #fff;
+        padding: 6px 45px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transform: rotate(45deg);
+        z-index: 10;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 2px;
+        width: 140px;
         text-align: center;
       }
     }
@@ -152,103 +195,200 @@ const PricingCard = styled(Card)`
 
 const PlanName = styled(Title)`
   &.ant-typography {
-    font-size: 1.5rem !important;
+    font-size: 1.8rem !important;
     margin-bottom: 10px !important;
     color: #333 !important;
     font-weight: 500 !important;
     text-transform: uppercase;
     letter-spacing: 1px;
+    line-height: 1.3 !important;
+
+    @media (max-width: 768px) {
+      font-size: 1.5rem !important;
+      text-align: center;
+    }
   }
 `;
 
 const PlanPrice = styled.div`
-  font-size: 3rem;
+  font-size: 2.2rem;
   font-weight: 700;
-  color: #d4af37;
+  color: #DA1701;
   margin-bottom: 5px;
   font-family: "Playfair Display", serif;
+  line-height: 1.1;
 
   span {
-    font-size: 1rem;
+    font-size: 0.8rem;
     font-weight: 400;
     color: #666;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 2rem;
+    text-align: center;
+
+    span {
+      font-size: 0.7rem;
+    }
   }
 `;
 
 const PlanDuration = styled(Paragraph)`
   &.ant-typography {
     color: #666;
-    margin-bottom: 30px !important;
+    margin-bottom: 0 !important;
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 1px;
+
+    @media (max-width: 768px) {
+      text-align: center;
+    }
   }
 `;
 
 const CardContent = styled.div`
-  flex: 1;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 400px;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  gap: 40px;
+
+  @media (max-width: 1200px) {
+    flex-direction: column;
+    gap: 30px;
+    text-align: center;
+  }
 `;
 
-const CardFooter = styled.div`
-  margin-top: auto;
-  padding-top: 20px;
+const PackageHeader = styled.div`
+  /* flex-shrink: 0; */
+  min-width: 200px;
+  text-align: left;
+
+  @media (max-width: 1200px) {
+    text-align: center;
+    min-width: auto;
+  }
+`;
+
+const PackageFeatures = styled.div`
+  /* flex: 4; */
+  text-align: left;
+  margin: 0 30px;
+  width: 100%;
+  /* background-color: red; */
+  .ant-list {
+    text-align: left;
+  }
+
+  @media (max-width: 1200px) {
+    text-align: left;
+    margin: 0;
+
+    .ant-list {
+      text-align: left;
+    }
+  }
 `;
 
 const FeatureList = styled(List)`
-  margin-bottom: 30px;
-  flex: 1;
-  min-height: 200px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-
   .ant-list-item {
     border: none;
-    padding: 8px 0;
+    padding: 8px 12px;
     justify-content: flex-start;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
 
     .anticon {
-      color: #d4af37;
+      color: #DA1701;
       margin-right: 10px;
-      font-size: 1rem;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+
+    .ant-list-item-meta-content {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+  }
+
+  @media (max-width: 1200px) {
+    .ant-list-item {
+      justify-content: flex-start;
+      text-align: left;
+      white-space: nowrap;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .ant-list-item {
+      padding: 6px 8px;
+      font-size: 0.9rem;
+      text-align: left;
+      white-space: nowrap;
     }
   }
 `;
 
 const PricingButton = styled(Button)`
   &.ant-btn {
-    width: 100%;
+    width: 90%;
     height: 45px;
-    border: 2px solid #d4af37;
+    border: 2px solid #DA1701;
     background: transparent;
-    color: #d4af37;
+    color: #DA1701;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 1px;
     border-radius: 25px;
     transition: all 0.3s ease;
-
+    margin-top: 20px;
     &:hover {
-      background: #d4af37;
+      background: #DA1701;
       color: #fff;
-      border-color: #d4af37;
+      border-color: #DA1701;
       transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+      box-shadow: 0 10px 30px rgba(218, 23, 1, 0.3);
     }
 
     &.featured {
-      background: #d4af37;
+      background: #DA1701;
       color: #fff;
 
       &:hover {
-        background: #f1c40f;
-        border-color: #f1c40f;
+        background: #B81501;
+        border-color: #B81501;
       }
+    }
+
+    &.custom-btn {
+      background: linear-gradient(135deg, #DA1701, #B81501);
+      border: 2px solid #DA1701;
+      color: #fff;
+
+      &:hover {
+        background: linear-gradient(135deg, #B81501, #A01301);
+        border-color: #B81501;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(218, 23, 1, 0.4);
+      }
+    }
+
+    @media (max-width: 768px) {
+      width: 100%;
+      max-width: 200px;
     }
   }
 `;
@@ -285,7 +425,7 @@ const CustomPlanName = styled(PlanName)`
 `;
 
 const CustomPlanPrice = styled(PlanPrice)`
-  color: #d4af37;
+  color: #DA1701;
 `;
 
 const CustomFeatureList = styled(FeatureList)`
@@ -293,21 +433,21 @@ const CustomFeatureList = styled(FeatureList)`
     color: #333;
 
     .anticon {
-      color: #d4af37;
+      color: #DA1701;
     }
   }
 `;
 
 const CustomButton = styled(PricingButton)`
   &.ant-btn {
-    background: linear-gradient(135deg, #d4af37, #f1c40f);
+    background: linear-gradient(135deg, #DA1701, #B81501);
     border: 2px solid transparent;
     color: #fff;
 
     &:hover {
-      background: linear-gradient(135deg, #f1c40f, #d4af37);
+      background: linear-gradient(135deg, #B81501, #A01301);
       transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+      box-shadow: 0 10px 30px rgba(218, 23, 1, 0.4);
     }
   }
 `;
@@ -319,7 +459,7 @@ const StyledModal = styled(Modal)`
   }
 
   .ant-modal-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #DA1701 0%, #B81501 100%);
     border: none;
 
     .ant-modal-title {
@@ -365,8 +505,8 @@ const StyledForm = styled(Form)`
 
     &:hover,
     &:focus {
-      border-color: #667eea;
-      box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+      border-color: #DA1701;
+      box-shadow: 0 0 0 2px rgba(218, 23, 1, 0.1);
     }
   }
 `;
@@ -375,7 +515,7 @@ const SubmitButton = styled(Button)`
   &.ant-btn {
     width: 100%;
     height: 45px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #DA1701 0%, #B81501 100%);
     border: none;
     border-radius: 8px;
     color: #fff;
@@ -383,9 +523,9 @@ const SubmitButton = styled(Button)`
     font-size: 1rem;
 
     &:hover {
-      background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+      background: linear-gradient(135deg, #B81501 0%, #A01301 100%);
       transform: translateY(-1px);
-      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+      box-shadow: 0 5px 15px rgba(218, 23, 1, 0.3);
     }
   }
 `;
@@ -412,133 +552,193 @@ const PricingSection = () => {
     form.resetFields();
   };
 
-  const pricingPlans = [
+  const weddingPackages = [
     {
-      name: "Standard",
-      price: 291,
-      duration: "Package",
+      name: "Mundri",
+      price: 40000,
+      duration: "Wedding Package",
       features: [
-        "4 Hours Photography",
-        "50 Edited Photos",
-        "Online Gallery",
-        "Basic Retouching",
+        "40 Sheet Album NTR",
+        "Acrylic Pad Included",
+        "FHD Video (1920x1080)",
+        "2 Photo Frames (16x24)",
+        "Professional Photographer",
+        "Videographer",
+        "Complete Wedding Coverage",
+        "Digital Gallery Access",
       ],
       featured: false,
     },
     {
-      name: "Premium",
-      price: 491,
-      duration: "Package",
+      name: "Nathuli",
+      price: 60000,
+      duration: "Wedding Package",
       features: [
-        "8 Hours Photography",
-        "100 Edited Photos",
-        "Online Gallery",
-        "Advanced Retouching",
-        "Engagement Session",
+        "50 Sheet Album NTR",
+        "Acrylic Pad Included",
+        "Candid Photography",
+        "FHD Video (1920x1080)",
+        "Drone Photography",
+        "Photo Frames (16x24, 20x30)",
+        "Professional Photographer",
+        "Videographer",
+        "Candid Shooter",
+        "Drone Operator",
+      ],
+      featured: false,
+    },
+    {
+      name: "Guloband",
+      price: 80000,
+      duration: "Wedding Package",
+      features: [
+        "53 Sheet Album NTR + 2 MT (Emboss)",
+        "Acrylic Pad Included",
+        "Candid Photography",
+        "FHD Video (1920x1080)",
+        "Drone Photography",
+        "Cinematography",
+        "2 Welcome Standy Frames (20x30)",
+        "Professional Photographer",
+        "Videographer",
+        "Candid Shooter",
+        "Drone Operator",
+        "Cinematographer",
       ],
       featured: true,
     },
     {
-      name: "Luxury",
-      price: 791,
-      duration: "Package",
+      name: "Timaniya",
+      price: 140000,
+      duration: "Complete Wedding",
       features: [
-        "Full Day Photography",
-        "200+ Edited Photos",
-        "Premium Online Gallery",
-        "Advanced Retouching",
-        "Engagement Session",
-        "Wedding Album",
+        "Pre-Wedding Cinematic Video",
+        "15 Sheet Pre-Wedding Album",
+        "58 Sheet Album NTR + 2 MT (Emboss)",
+        "Acrylic Pad Included",
+        "Candid Photography",
+        "FHD Video (1920x1080)",
+        "Drone Photography",
+        "Cinematography",
+        "LED Wall (8x12)",
+        "Photo Frame (20x30)",
+        "4 LED Welcome Frames (20x30 Magic Touch)",
+        "Complete Professional Team",
+        "Premium Wedding Coverage",
       ],
       featured: false,
     },
     {
-      name: "Custom",
-      price: "?",
-      duration: "Let's Talk",
+      name: "Custom Package",
+      price: "Let's Discuss",
+      duration: "Tailored for You",
       features: [
-        "Tailored to Your Needs",
-        "Unlimited Photography Hours",
-        "Custom Photo Packages",
-        "Personalized Services",
-        "Flexible Pricing",
+        "Customizable Photography Hours",
+        "Choose Your Album Size & Style",
+        "Select Video Quality & Duration",
+        "Pick Your Photo Frame Sizes",
+        "Choose Your Team Size",
+        "Add Drone Photography (Optional)",
+        "Include Cinematography (Optional)",
+        "LED Wall Setup (Optional)",
+        "Pre-Wedding Shoot (Optional)",
+        "Candid Photography (Optional)",
+        "Professional Makeup Artist (Optional)",
+        "Flexible Pricing Options",
+        "Personalized Service Package",
+        "Complete Wedding Coverage",
       ],
       featured: false,
-      custom: true,
+      isCustom: true,
     },
   ];
 
   return (
     <PricingContainer>
       <Container>
-        <SectionTitle level={2}>Pricing Plans</SectionTitle>
+        <SectionTitle level={2}>Wedding Photography Packages</SectionTitle>
         <SectionSubtitle>
-          Alienum phaedrum torquatos nec eu, vis detraxit periculis ex, nihil
-          expetendis in mei.
+          Choose the perfect wedding photography package that captures every
+          precious moment of your special day with professional excellence.
         </SectionSubtitle>
 
-        <Row gutter={[40, 40]} justify="center">
-          {pricingPlans.map((plan, index) => (
-            <Col xs={24} lg={6} key={index}>
-              {plan.custom ? (
-                <CustomCard>
-                  <CardContent>
-                    <CustomPlanName level={3}>
-                      <StarOutlined style={{ marginRight: 8 }} />
-                      {plan.name}
-                    </CustomPlanName>
-                    <CustomPlanPrice>
-                      {plan.price}
-                      <span>/{plan.duration}</span>
-                    </CustomPlanPrice>
-                    <PlanDuration>{plan.duration}</PlanDuration>
-
-                    <CustomFeatureList
-                      dataSource={plan.features}
-                      renderItem={(feature) => (
-                        <List.Item>
-                          <CheckOutlined />
-                          {feature}
-                        </List.Item>
-                      )}
-                    />
-                  </CardContent>
-
-                  <CardFooter>
-                    <CustomButton onClick={showModal}>Choose Plan</CustomButton>
-                  </CardFooter>
-                </CustomCard>
-              ) : (
-                <PricingCard
-                  className={plan.featured ? "featured" : ""}
-                  featured={plan.featured}
-                >
-                  <CardContent>
-                    <PlanName level={3}>{plan.name}</PlanName>
+        <Row gutter={[0, 40]} justify="center" align="stretch">
+          {weddingPackages.map((pkg, index) => (
+            <Col xs={24} key={index}>
+              <PricingCard
+                className={
+                  pkg.featured ? "featured" : pkg.isCustom ? "custom" : ""
+                }
+                featured={pkg.featured}
+              >
+                <CardContent>
+                  <PackageHeader>
+                    <PlanName level={3}>{pkg.name}</PlanName>
                     <PlanPrice>
-                      ${plan.price}
-                      <span>/{plan.duration}</span>
-                    </PlanPrice>
-                    <PlanDuration>{plan.duration}</PlanDuration>
-
-                    <FeatureList
-                      dataSource={plan.features}
-                      renderItem={(feature) => (
-                        <List.Item>
-                          <CheckOutlined />
-                          {feature}
-                        </List.Item>
+                      {pkg.isCustom ? (
+                        <span
+                          style={{ fontSize: "1.8rem", fontStyle: "italic" }}
+                        >
+                          {pkg.price}
+                        </span>
+                      ) : (
+                        `₹${pkg.price.toLocaleString("en-IN")}`
                       )}
-                    />
-                  </CardContent>
-
-                  <CardFooter>
-                    <PricingButton className={plan.featured ? "featured" : ""}>
-                      Choose Plan
+                    </PlanPrice>
+                    <PlanDuration>{pkg.duration}</PlanDuration>
+                    <PricingButton
+                      className={
+                        pkg.featured
+                          ? "featured"
+                          : pkg.isCustom
+                          ? "custom-btn"
+                          : ""
+                      }
+                      onClick={showModal}
+                    >
+                      {pkg.isCustom ? "Customize Now" : "Book This Package"}
                     </PricingButton>
-                  </CardFooter>
-                </PricingCard>
-              )}
+                  </PackageHeader>
+
+                  <PackageFeatures>
+                    <FeatureList
+                      grid={{
+                        gutter: [20, 8],
+                        column: 2,
+                        xs: 1,
+                        sm: 1,
+                        md: 2,
+                        lg: 2,
+                        xl: 2,
+                      }}
+                      dataSource={pkg.features}
+                      renderItem={(feature) => {
+                        return (
+                          <>
+                            <List.Item style={{ display: "flex" }}>
+                              <CheckOutlined />
+                              <div
+                                style={{
+                                  whiteSpace: "nowrap",
+                                  overflow: "hidden",
+                                  // textOverflow: "ellipsis",
+                                  textWrap: "wrap",
+                                }}
+                              >
+                                <span> {feature}</span>
+                              </div>
+                            </List.Item>
+                          </>
+                        );
+                      }}
+                    />
+                  </PackageFeatures>
+
+                  {/* <PackageActions>
+                 
+                  </PackageActions> */}
+                </CardContent>
+              </PricingCard>
             </Col>
           ))}
         </Row>
