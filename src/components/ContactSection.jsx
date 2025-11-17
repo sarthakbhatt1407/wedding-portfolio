@@ -135,7 +135,7 @@ const StyledTextArea = styled(TextArea)`
 
 const SubmitButton = styled(Button)`
   &.ant-btn {
-    background: linear-gradient(135deg, #DA1701, #B81501);
+    background: linear-gradient(135deg, #da1701, #b81501);
     border: none;
     color: #fff;
     padding: 12px 40px;
@@ -148,7 +148,7 @@ const SubmitButton = styled(Button)`
     transition: all 0.3s ease;
 
     &:hover {
-      background: linear-gradient(135deg, #B81501, #A01301);
+      background: linear-gradient(135deg, #b81501, #a01301);
       transform: translateY(-2px);
       box-shadow: 0 10px 30px rgba(218, 23, 1, 0.3);
     }

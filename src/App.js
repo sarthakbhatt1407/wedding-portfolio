@@ -1,24 +1,53 @@
 import { useEffect } from "react";
 import { Route, Routes } from "react-router";
+import { useDispatch } from "react-redux";
 import Home from "./pages/Home";
+import RentalService from "./pages/RentalService";
+import Cart from "./pages/Cart";
+import Gallery from "./pages/Gallery";
 import AOS from "aos";
 import "aos/dist/aos.css";
 
 const App = () => {
+  const dispatch = useDispatch();
+
   useEffect(() => {
+    const localStr = localStorage.getItem("state");
+
+    if (localStr) {
+      try {
+        const parsedState = JSON.parse(localStr);
+        dispatch({ type: "reload", data: { ...parsedState } });
+      } catch (error) {
+        console.error("Error parsing localStorage state:", error);
+      }
+    }
+
     AOS.init({
       once: true,
       duration: 650,
     });
-  }, []);
+
+    const aosRefresh = setInterval(() => {
+      AOS.refresh();
+    }, 500);
+
+    return () => {
+      clearInterval(aosRefresh);
+    };
+  }, [dispatch]);
+
   console.log(process.env.REACT_APP_BASE_URL);
 
   return (
     <div>
       <Routes>
-        <Route path="/" exact element={<Home />} />
-
-        <Route path="*" exact element={<Home />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/#*" element={<Home />} />
+        <Route path="/rental" element={<RentalService />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/gallery" element={<Gallery />} />
+        <Route path="*" element={<Home />} />
       </Routes>
     </div>
   );

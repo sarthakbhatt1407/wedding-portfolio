@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Button } from "antd";
+import { useSelector } from "react-redux";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Button, Badge } from "antd";
 import {
   MenuOutlined,
   HomeOutlined,
@@ -10,6 +12,7 @@ import {
   MessageOutlined,
   InstagramOutlined,
   PhoneOutlined,
+  ShoppingCartOutlined,
 } from "@ant-design/icons";
 import styled from "styled-components";
 
@@ -101,14 +104,14 @@ const Logo = styled.div`
 const NavMenu = styled.div`
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: 25px;
 
   @media (max-width: 1200px) {
-    gap: 25px;
+    gap: 20px;
   }
 
   @media (max-width: 992px) {
-    gap: 20px;
+    gap: 15px;
   }
 
   @media (max-width: 768px) {
@@ -135,12 +138,12 @@ const NavItem = styled.a`
   }
 
   @media (max-width: 1200px) {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     letter-spacing: 0.8px;
   }
 
   @media (max-width: 992px) {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     letter-spacing: 0.5px;
   }
 
@@ -276,8 +279,8 @@ const ContactButton = styled(Button)`
       props.isInHero ? "2px solid rgba(255, 255, 255, 0.4)" : "none"};
     color: #fff;
     border-radius: 25px;
-    padding: 0 25px;
-    height: 40px;
+    padding: 0 20px;
+    height: 36px;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -289,6 +292,7 @@ const ContactButton = styled(Button)`
       props.isInHero
         ? "0 4px 15px rgba(0, 0, 0, 0.2)"
         : "0 4px 15px rgba(212, 175, 55, 0.3)"};
+    font-size: 0.8rem;
 
     &:hover {
       transform: translateY(-2px);
@@ -302,6 +306,12 @@ const ContactButton = styled(Button)`
           : "linear-gradient(45deg, #B81501, #DA1701)"};
     }
 
+    @media (max-width: 1024px) {
+      padding: 0 15px;
+      height: 32px;
+      font-size: 0.75rem;
+    }
+
     @media (max-width: 768px) {
       display: none;
     }
@@ -309,6 +319,9 @@ const ContactButton = styled(Button)`
 `;
 
 const FloatingNav = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const cartItems = useSelector((state) => state.cartItems || []);
   const [isVisible, setIsVisible] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isInHero, setIsInHero] = useState(true);
@@ -330,6 +343,31 @@ const FloatingNav = () => {
       label: "Services",
       icon: <CustomerServiceOutlined />,
       href: "#services",
+    },
+    {
+      key: "gallery",
+      label: "Gallery",
+      icon: <CameraOutlined />,
+      href: "/gallery",
+      isExternal: true,
+    },
+    {
+      key: "rental",
+      label: "Rental",
+      icon: <ShoppingCartOutlined />,
+      href: "/rental",
+      isExternal: true,
+    },
+    {
+      key: "cart",
+      label: "Cart",
+      icon: (
+        <Badge count={cartItems.length} size="small">
+          <ShoppingCartOutlined />
+        </Badge>
+      ),
+      href: "/cart",
+      isExternal: true,
     },
     { key: "team", label: "Team", icon: <TeamOutlined />, href: "#team" },
     {
@@ -359,11 +397,23 @@ const FloatingNav = () => {
       setIsScrolled(currentScrollY > 50);
       setIsVisible(currentScrollY < lastScrollY || currentScrollY < 100);
 
-      // Check if we're in the hero section
-      const heroSection = document.getElementById("home");
-      if (heroSection) {
-        const heroRect = heroSection.getBoundingClientRect();
-        setIsInHero(heroRect.bottom > 100);
+      // Check if we're on rental, cart, or gallery pages - always use non-hero styling
+      const isExternalPage =
+        location.pathname === "/rental" ||
+        location.pathname === "/cart" ||
+        location.pathname === "/gallery";
+
+      if (isExternalPage) {
+        setIsInHero(false);
+      } else {
+        // Check if we're in the hero section (only for home page)
+        const heroSection = document.getElementById("home");
+        if (heroSection) {
+          const heroRect = heroSection.getBoundingClientRect();
+          setIsInHero(heroRect.bottom > 100);
+        } else {
+          setIsInHero(false);
+        }
       }
 
       setLastScrollY(currentScrollY);
@@ -398,6 +448,18 @@ const FloatingNav = () => {
   }, [lastScrollY]);
 
   // Prevent body scroll when mobile menu is open
+  // Set initial navbar styling based on current page
+  useEffect(() => {
+    const isExternalPage =
+      location.pathname === "/rental" ||
+      location.pathname === "/cart" ||
+      location.pathname === "/gallery";
+    if (isExternalPage) {
+      setIsInHero(false);
+      setIsScrolled(true); // Force scrolled state for better visibility
+    }
+  }, [location.pathname]);
+
   useEffect(() => {
     if (mobileMenuOpen) {
       document.body.style.overflow = "hidden";
@@ -410,11 +472,27 @@ const FloatingNav = () => {
     };
   }, [mobileMenuOpen]);
 
-  const scrollToSection = (href) => {
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+  const scrollToSection = (href, isExternal = false) => {
+    if (isExternal) {
+      navigate(href);
+      return;
     }
+
+    // Check if we're currently on the home page
+    const isHomePage = location.pathname === "/";
+
+    if (isHomePage) {
+      // If we're on home page, scroll to section normally
+      const element = document.querySelector(href);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      // If we're on another page (rental/cart), navigate to home first with hash
+      // Use state to pass the target section
+      navigate("/", { state: { targetSection: href } });
+    }
+
     setMobileMenuOpen(false);
   };
 
@@ -430,24 +508,36 @@ const FloatingNav = () => {
       >
         <NavContent>
           <Logo isInHero={isInHero} onClick={() => scrollToSection("#home")}>
-            Solène
+            Rivaaz Films
           </Logo>
 
           <NavMenu>
-            {menuItems.slice(0, 6).map((item) => (
-              <NavItem
-                key={item.key}
-                href={item.href}
-                isInHero={isInHero}
-                className={activeSection === item.key ? "active" : ""}
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollToSection(item.href);
-                }}
-              >
-                {item.label}
-              </NavItem>
-            ))}
+            {menuItems
+              .filter((item) =>
+                [
+                  "home",
+                  "about",
+                  "portfolio",
+                  "services",
+                  "gallery",
+                  "rental",
+                  "cart",
+                ].includes(item.key)
+              )
+              .map((item) => (
+                <NavItem
+                  key={item.key}
+                  href={item.href}
+                  isInHero={isInHero}
+                  className={activeSection === item.key ? "active" : ""}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToSection(item.href, item.isExternal);
+                  }}
+                >
+                  {item.label}
+                </NavItem>
+              ))}
           </NavMenu>
 
           <ContactButton
@@ -472,7 +562,7 @@ const FloatingNav = () => {
         {menuItems.map((item) => (
           <MobileMenuItem
             key={item.key}
-            onClick={() => scrollToSection(item.href)}
+            onClick={() => scrollToSection(item.href, item.isExternal)}
             isActive={activeSection === item.key}
           >
             {item.label}

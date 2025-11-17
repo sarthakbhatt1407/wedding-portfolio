@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import "../styles/global.css";
@@ -41,6 +42,8 @@ const ResponsiveContainer = styled.div`
 `;
 
 const Home = () => {
+  const location = useLocation();
+
   useEffect(() => {
     AOS.init({
       duration: 1000,
@@ -59,6 +62,22 @@ const Home = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // Handle navigation with target section from other pages
+  useEffect(() => {
+    if (location.state?.targetSection) {
+      const targetSection = location.state.targetSection;
+      const element = document.querySelector(targetSection);
+      if (element) {
+        // Delay to ensure the page is fully rendered and AOS animations are complete
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: "smooth" });
+        }, 300);
+      }
+      // Clear the state to prevent repeated scrolling
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
 
   return (
     <ResponsiveContainer className="home-page">
