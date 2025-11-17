@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import { Row, Col, Typography, Tabs, Button, Modal } from "antd";
+import { Row, Col, Typography, Tabs, Modal } from "antd";
 import {
   CameraOutlined,
   VideoCameraOutlined,
   PlayCircleOutlined,
-  FullscreenOutlined,
 } from "@ant-design/icons";
 import styled from "styled-components";
 import FloatingNav from "../components/FloatingNav";

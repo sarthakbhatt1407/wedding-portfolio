@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import { Card, Button, Typography, Row, Col, Empty, Divider } from "antd";
+import { Card, Button, Typography, Row, Col, Divider } from "antd";
 import {
   ShoppingCartOutlined,
   DeleteOutlined,

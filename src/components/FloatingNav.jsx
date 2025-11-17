@@ -445,7 +445,7 @@ const FloatingNav = () => {
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+  }, [lastScrollY, location.pathname]);
 
   // Prevent body scroll when mobile menu is open
   // Set initial navbar styling based on current page

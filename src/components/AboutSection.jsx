@@ -1,4 +1,3 @@
-import React from "react";
 import { Row, Col, Typography, Button } from "antd";
 import {
   PlayCircleOutlined,
@@ -187,7 +186,7 @@ const PlayButton = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 2rem;
-  color: #DA1701;
+  color: #da1701;
   cursor: pointer;
   z-index: 2;
   transition: all 0.4s ease;
@@ -208,7 +207,7 @@ const PlayButton = styled.div`
 
   &:hover {
     transform: translate(-50%, -50%) scale(1.1);
-    background: #DA1701;
+    background: #da1701;
     color: #fff;
     box-shadow: 0 15px 40px rgba(212, 175, 55, 0.4);
   }
@@ -240,7 +239,7 @@ const SectionTitle = styled.h2`
     left: 0;
     width: 60px;
     height: 4px;
-    background: linear-gradient(135deg, #DA1701, #B81501);
+    background: linear-gradient(135deg, #da1701, #b81501);
     border-radius: 2px;
   }
 
@@ -301,7 +300,7 @@ const StatItem = styled.div`
 const StatNumber = styled.div`
   font-size: 2.5rem;
   font-weight: 700;
-  color: #DA1701;
+  color: #da1701;
   margin-bottom: 10px;
   font-family: "Playfair Display", serif;
 `;
@@ -316,7 +315,7 @@ const StatLabel = styled.div`
 
 const CTAButton = styled(Button)`
   &.ant-btn {
-    background: linear-gradient(135deg, #DA1701, #B81501);
+    background: linear-gradient(135deg, #da1701, #b81501);
     border: none;
     height: 60px;
     padding: 0 40px;
@@ -332,7 +331,7 @@ const CTAButton = styled(Button)`
     &:hover {
       transform: translateY(-3px);
       box-shadow: 0 20px 40px rgba(212, 175, 55, 0.4);
-      background: linear-gradient(135deg, #B81501, #DA1701);
+      background: linear-gradient(135deg, #b81501, #da1701);
       color: #fff;
     }
 
@@ -390,7 +389,7 @@ const FeatureBox = styled.div`
 const FeatureIcon = styled.div`
   width: 90px;
   height: 90px;
-  background: linear-gradient(135deg, #DA1701, #B81501);
+  background: linear-gradient(135deg, #da1701, #b81501);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -427,7 +426,7 @@ const FeatureIcon = styled.div`
 
   ${FeatureBox}:hover & {
     transform: scale(1.1) rotateY(360deg);
-    background: linear-gradient(135deg, #B81501, #DA1701);
+    background: linear-gradient(135deg, #b81501, #da1701);
     box-shadow: 0 15px 40px rgba(212, 175, 55, 0.4);
 
     &::after {

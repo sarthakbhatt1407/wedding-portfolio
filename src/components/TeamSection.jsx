@@ -105,7 +105,7 @@ const SectionTitle = styled(Title)`
       transform: translateX(-50%);
       width: 80px;
       height: 4px;
-      background: linear-gradient(135deg, #DA1701, #B81501);
+      background: linear-gradient(135deg, #da1701, #b81501);
       border-radius: 2px;
     }
 
@@ -264,7 +264,7 @@ const MemberInfo = styled.div`
     transform: translateX(-50%);
     width: 60px;
     height: 4px;
-    background: linear-gradient(135deg, #DA1701, #B81501);
+    background: linear-gradient(135deg, #da1701, #b81501);
     border-radius: 2px;
   }
 `;
@@ -285,7 +285,7 @@ const SocialLinks = styled(Space)`
 
     &:hover {
       color: #fff;
-      background: linear-gradient(135deg, #DA1701, #B81501);
+      background: linear-gradient(135deg, #da1701, #b81501);
       transform: scale(1.2) translateY(-3px);
       box-shadow: 0 10px 20px rgba(212, 175, 55, 0.4);
     }
@@ -308,12 +308,12 @@ const ContactInfo = styled.div`
 
     .anticon {
       margin-right: 8px;
-      color: #DA1701;
+      color: #da1701;
       font-size: 1rem;
     }
 
     &:hover {
-      color: #DA1701;
+      color: #da1701;
       transform: translateX(5px);
     }
   }
@@ -334,8 +334,8 @@ const ViewProfileBtn = styled(Button)`
     transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 
     &:hover {
-      background: linear-gradient(135deg, #DA1701, #B81501);
-      border-color: #DA1701;
+      background: linear-gradient(135deg, #da1701, #b81501);
+      border-color: #da1701;
       color: #fff;
       transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
@@ -354,13 +354,13 @@ const MemberName = styled(Title)`
   }
 
   ${TeamCard}:hover & {
-    color: #DA1701 !important;
+    color: #da1701 !important;
   }
 `;
 
 const MemberRole = styled(Paragraph)`
   &.ant-typography {
-    color: #DA1701 !important;
+    color: #da1701 !important;
     margin-bottom: 15px !important;
     font-size: 1rem !important;
     text-transform: uppercase !important;
@@ -383,7 +383,7 @@ const ExperienceBadge = styled.div`
   position: absolute;
   top: 20px;
   right: 20px;
-  background: linear-gradient(135deg, #DA1701, #B81501);
+  background: linear-gradient(135deg, #da1701, #b81501);
   color: #fff;
   padding: 8px 15px;
   border-radius: 20px;
