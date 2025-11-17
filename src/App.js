@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import RentalService from "./pages/RentalService";
 import Cart from "./pages/Cart";
 import Gallery from "./pages/Gallery";
+import AdminPanel from "./pages/AdminPanel";
 import AOS from "aos";
 import "aos/dist/aos.css";
 
@@ -47,6 +48,7 @@ const App = () => {
         <Route path="/rental" element={<RentalService />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/gallery" element={<Gallery />} />
+        <Route path="/admin" element={<AdminPanel />} />
         <Route path="*" element={<Home />} />
       </Routes>
     </div>
