@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Card, Button, Upload, Modal, message, Popconfirm } from "antd";
+import { useState, useEffect } from "react";
+import { Card, Button, Upload, Modal, message, Popconfirm, Spin } from "antd";
 import {
   PlusOutlined,
   DeleteOutlined,
@@ -188,40 +188,48 @@ const StyledModal = styled(Modal)`
 `;
 
 const PhotoAdmin = ({ hideNavFooter = false }) => {
-  const [photos, setPhotos] = useState([
-    {
-      id: 1,
-      image:
-        "https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      createdAt: "2024-01-15",
-    },
-    {
-      id: 2,
-      image:
-        "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      createdAt: "2024-01-10",
-    },
-    {
-      id: 3,
-      image:
-        "https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      createdAt: "2024-01-08",
-    },
-    {
-      id: 4,
-      image:
-        "https://images.unsplash.com/photo-1583939003579-730e3918a45a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      createdAt: "2024-01-05",
-    },
-  ]);
-
+  const [photos, setPhotos] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [uploading, setUploading] = useState(false);
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
   const [fileList, setFileList] = useState([]);
 
-  const handleUploadComplete = () => {
+  // Fetch photos from API
+  const fetchPhotos = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/wedding/gallery/image`
+      );
+      const data = await response.json();
+
+      // Transform API data to match component structure
+      const transformedPhotos = data.map((item) => ({
+        id: item._id,
+        image: `${process.env.REACT_APP_BASE_URL}/` + item.link,
+        createdAt: item.createdAt
+          ? new Date(item.createdAt).toISOString().split("T")[0]
+          : new Date().toISOString().split("T")[0], // fallback to current date
+      }));
+      console.log(transformedPhotos);
+
+      setPhotos(transformedPhotos);
+    } catch (error) {
+      console.error("Error fetching photos:", error);
+      message.error("Failed to load photos");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPhotos();
+  }, []);
+
+  // ...existing code...
+  const handleUploadComplete = async () => {
     if (fileList.length === 0) {
       message.warning("Please select at least one photo");
       return;
@@ -229,20 +237,40 @@ const PhotoAdmin = ({ hideNavFooter = false }) => {
 
     setUploading(true);
 
-    // Process all selected files
     const newPhotos = fileList.map((file) => ({
       id: Date.now() + Math.random(),
       image: file.url || URL.createObjectURL(file.originFileObj),
       createdAt: new Date().toISOString().split("T")[0],
+      originFileObj: file.originFileObj,
     }));
 
-    setTimeout(() => {
-      setPhotos([...newPhotos, ...photos]);
-      setUploading(false);
-      setUploadModalVisible(false);
-      setFileList([]);
-      message.success(`${newPhotos.length} photo(s) uploaded successfully!`);
-    }, 1000);
+    let successCount = 0;
+    for (let photo of newPhotos) {
+      const formData = new FormData();
+      formData.append("type", "image");
+      formData.append("image", photo.originFileObj);
+
+      try {
+        await fetch(`${process.env.REACT_APP_BASE_URL}/wedding/add-gallery`, {
+          method: "POST",
+          body: formData,
+        });
+        successCount++;
+      } catch (err) {
+        // Optionally handle error for each photo
+        console.error("Upload failed for photo:", photo.id, err);
+      }
+    }
+
+    setUploading(false);
+    setUploadModalVisible(false);
+    setFileList([]);
+    message.success(`${successCount} photo(s) uploaded successfully!`);
+
+    // Refresh photos after upload
+    if (successCount > 0) {
+      fetchPhotos();
+    }
   };
 
   const handleUploadChange = ({ fileList: newFileList }) => {
@@ -266,9 +294,25 @@ const PhotoAdmin = ({ hideNavFooter = false }) => {
     });
   };
 
-  const handleDelete = (id) => {
-    setPhotos(photos.filter((photo) => photo.id !== id));
-    message.success("Photo deleted successfully!");
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/wedding/delete-gallery/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (response.ok) {
+        setPhotos(photos.filter((photo) => photo.id !== id));
+        message.success("Photo deleted successfully!");
+      } else {
+        message.error("Failed to delete photo");
+      }
+    } catch (error) {
+      console.error("Error deleting photo:", error);
+      message.error("Failed to delete photo");
+    }
   };
 
   const handlePreview = (imageUrl) => {
@@ -294,7 +338,14 @@ const PhotoAdmin = ({ hideNavFooter = false }) => {
           </PageHeader>
 
           <Card>
-            {photos.length === 0 ? (
+            {loading ? (
+              <div style={{ textAlign: "center", padding: "60px 20px" }}>
+                <Spin size="large" />
+                <p style={{ marginTop: 16, color: "#666" }}>
+                  Loading photos...
+                </p>
+              </div>
+            ) : photos.length === 0 ? (
               <EmptyState>
                 <div className="empty-icon">
                   <CameraOutlined />

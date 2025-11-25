@@ -659,30 +659,6 @@ const AdminPanel = () => {
             <span className="brand-text">{getCurrentTitle()}</span>
           </BrandLogo>
         </div>
-
-        <HeaderActions>
-          <Tooltip title="Notifications">
-            <Badge count={3} size="small">
-              <ActionButton icon={<BellOutlined />} />
-            </Badge>
-          </Tooltip>
-
-          <Tooltip title="Settings">
-            <ActionButton icon={<SettingOutlined />} />
-          </Tooltip>
-
-          <UserInfo>
-            <Avatar
-              size={32}
-              icon={<UserOutlined />}
-              style={{ backgroundColor: "#DA1701" }}
-            />
-            <div className="user-details">
-              <div className="name">Admin User</div>
-              <div className="role">Administrator</div>
-            </div>
-          </UserInfo>
-        </HeaderActions>
       </AdminHeader>
 
       <Layout style={{ background: "transparent" }}>

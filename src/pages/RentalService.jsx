@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Card,
@@ -10,6 +10,7 @@ import {
   Tag,
   Rate,
   message,
+  Spin,
 } from "antd";
 import {
   CameraOutlined,
@@ -257,6 +258,57 @@ const RentalService = () => {
   const cartItems = useSelector((state) => state.cartItems || []);
   const [selectedItem, setSelectedItem] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [rentals, setRentals] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch rental items from API
+  const fetchRentals = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/wedding/get-rental`
+      );
+      const data = await response.json();
+      console.log(data);
+
+      // Transform API data to match component structure
+      const transformedItems = data.map((item) => ({
+        id: item._id,
+        name: item.name,
+        description: item.description,
+        price: `₹${item.price}`,
+        period: item.period,
+        image: `${process.env.REACT_APP_BASE_URL}/${item.link}`,
+        available: item.available,
+        specification: item.specification
+          ? item.specification.split(",").map((s) => s.trim())
+          : [],
+        included: item.included
+          ? item.included.split(",").map((s) => s.trim())
+          : [],
+        type: item.type,
+        rating: 4.5, // Default rating since it's not in schema
+        specs: item.specification
+          ? item.specification.split(",").map((s) => s.trim())
+          : [],
+        includes: item.included
+          ? item.included.split(",").map((s) => s.trim())
+          : [],
+      }));
+
+      setRentals(transformedItems);
+    } catch (error) {
+      console.error("Error fetching rental items:", error);
+      message.error("Failed to load rental items");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load data on component mount
+  useEffect(() => {
+    fetchRentals();
+  }, []);
 
   const handleAddToCart = (item) => {
     // Check if item already exists in cart
@@ -273,142 +325,7 @@ const RentalService = () => {
     message.success(`${item.name} added to cart!`);
   };
 
-  const rentalItems = [
-    {
-      id: 1,
-      name: "Canon EOS R5",
-      description: "Professional mirrorless camera with 45MP full-frame sensor",
-      price: "₹2,500",
-      period: "per day",
-      image:
-        "https://images.unsplash.com/photo-1606983340126-99ab4feaa64a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      available: true,
-      rating: 4.8,
-      specs: [
-        "45MP Full Frame Sensor",
-        "8K Video Recording",
-        "Image Stabilization",
-        "Dual Memory Card Slots",
-        '3.2" Vari-angle Touchscreen',
-      ],
-      includes: [
-        "Camera Body",
-        "Battery",
-        "Charger",
-        "Memory Card",
-        "Camera Strap",
-      ],
-    },
-    {
-      id: 2,
-      name: "Sony FX3 Cinema Camera",
-      description: "Full-frame cinema camera for professional video production",
-      price: "₹4,000",
-      period: "per day",
-      image:
-        "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      available: true,
-      rating: 4.9,
-      specs: [
-        "Full Frame 4K 120p",
-        "S-Cinetone Color Science",
-        "Dual Base ISO",
-        "Active Image Stabilization",
-        "Professional Audio Inputs",
-      ],
-      includes: [
-        "Camera Body",
-        "2x Batteries",
-        "Charger",
-        "Handle",
-        "Recording Media",
-      ],
-    },
-    {
-      id: 3,
-      name: "Canon RF 24-70mm f/2.8",
-      description: "Professional zoom lens for portraits and events",
-      price: "₹800",
-      period: "per day",
-      image:
-        "https://images.unsplash.com/photo-1617005082133-548c4dd27f35?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      available: false,
-      rating: 4.7,
-      specs: [
-        "f/2.8 Constant Aperture",
-        "Image Stabilization",
-        "Weather Sealed",
-        "Ultra-low Dispersion Elements",
-        "Control Ring",
-      ],
-      includes: ["Lens", "Front & Rear Caps", "Lens Hood", "Cleaning Cloth"],
-    },
-    {
-      id: 4,
-      name: "DJI Ronin SC Gimbal",
-      description: "3-axis handheld gimbal for smooth camera movements",
-      price: "₹1,200",
-      period: "per day",
-      image:
-        "https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      available: true,
-      rating: 4.6,
-      specs: [
-        "3-Axis Stabilization",
-        "12 Hour Battery Life",
-        "2.2kg Payload",
-        "ActiveTrack 3.0",
-        "Force Mobile Integration",
-      ],
-      includes: ["Gimbal", "Handle", "Battery", "Charger", "Carrying Case"],
-    },
-    {
-      id: 5,
-      name: "Godox AD600Pro Flash",
-      description: "Portable studio flash with wireless control",
-      price: "₹1,500",
-      period: "per day",
-      image:
-        "https://images.unsplash.com/photo-1555881400-69d7e38fb6d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      available: true,
-      rating: 4.5,
-      specs: [
-        "600Ws Flash Power",
-        "TTL & HSS Support",
-        "2.4G Wireless System",
-        "300W Modeling Lamp",
-        "Fast Recycle Time",
-      ],
-      includes: [
-        "Flash Unit",
-        "Battery",
-        "Charger",
-        "Reflector",
-        "Wireless Trigger",
-      ],
-    },
-    {
-      id: 6,
-      name: "Manfrotto Carbon Tripod",
-      description: "Professional carbon fiber tripod for stability",
-      price: "₹600",
-      period: "per day",
-      image:
-        "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      available: true,
-      rating: 4.4,
-      specs: [
-        "Carbon Fiber Construction",
-        "10kg Load Capacity",
-        "Quick Release Plate",
-        "Adjustable Leg Angles",
-        "Compact Folding Design",
-      ],
-      includes: ["Tripod", "Ball Head", "Quick Release Plate", "Carrying Bag"],
-    },
-  ];
-
-  const showDetails = (item) => {
+  const handleViewDetails = (item) => {
     setSelectedItem(item);
     setModalVisible(true);
   };
@@ -427,67 +344,76 @@ const RentalService = () => {
             </PageSubtitle>
           </PageHeader>
 
-          <Row gutter={[30, 30]}>
-            {rentalItems.map((item) => (
-              <Col xs={24} sm={12} lg={8} key={item.id}>
-                <RentalCard
-                  cover={<img alt={item.name} src={item.image} />}
-                  actions={[
-                    <Button
-                      type="text"
-                      icon={<InfoCircleOutlined />}
-                      onClick={() => showDetails(item)}
-                    >
-                      Details
-                    </Button>,
-                    <Button
-                      type="text"
-                      icon={<ShoppingCartOutlined />}
-                      onClick={() => handleAddToCart(item)}
-                      disabled={!item.available}
-                      style={{
-                        color: item.available ? "#DA1701" : "#ccc",
-                        borderColor: item.available ? "#DA1701" : "#ccc",
-                      }}
-                    >
-                      Add to Cart
-                    </Button>,
-                  ]}
-                >
-                  <div>
-                    <ItemName level={4}>{item.name}</ItemName>
-                    <Rate
-                      disabled
-                      defaultValue={item.rating}
-                      style={{ fontSize: "14px", marginBottom: "10px" }}
-                    />
-                    <ItemDescription>{item.description}</ItemDescription>
-
-                    <SpecsList>
-                      {item.specs.slice(0, 3).map((spec, index) => (
-                        <li key={index}>
-                          <CheckCircleOutlined />
-                          {spec}
-                        </li>
-                      ))}
-                    </SpecsList>
-
-                    <PriceContainer>
-                      <Price>
-                        {item.price}
-                        <span className="period"> {item.period}</span>
-                      </Price>
-                      <AvailabilityTag
-                        className={item.available ? "available" : "rented"}
+          {loading ? (
+            <div style={{ textAlign: "center", padding: "100px 0" }}>
+              <Spin size="large" />
+              <div style={{ marginTop: 16, color: "#666" }}>
+                Loading rental items...
+              </div>
+            </div>
+          ) : (
+            <Row gutter={[30, 30]}>
+              {rentals.map((item) => (
+                <Col xs={24} sm={12} lg={8} key={item.id}>
+                  <RentalCard
+                    cover={<img alt={item.name} src={item.image} />}
+                    actions={[
+                      <Button
+                        type="text"
+                        icon={<InfoCircleOutlined />}
+                        onClick={() => handleViewDetails(item)}
                       >
-                        {item.available ? "Available" : "Rented"}
-                      </AvailabilityTag>
-                    </PriceContainer>
-                  </div>
-                </RentalCard>
-              </Col>
-            ))}
-          </Row>
+                        Details
+                      </Button>,
+                      <Button
+                        type="text"
+                        icon={<ShoppingCartOutlined />}
+                        onClick={() => handleAddToCart(item)}
+                        disabled={!item.available}
+                        style={{
+                          color: item.available ? "#DA1701" : "#ccc",
+                          borderColor: item.available ? "#DA1701" : "#ccc",
+                        }}
+                      >
+                        Add to Cart
+                      </Button>,
+                    ]}
+                  >
+                    <div>
+                      <ItemName level={4}>{item.name}</ItemName>
+                      <Rate
+                        disabled
+                        defaultValue={item.rating}
+                        style={{ fontSize: "14px", marginBottom: "10px" }}
+                      />
+                      <ItemDescription>{item.description}</ItemDescription>
+
+                      <SpecsList>
+                        {item.specs.slice(0, 3).map((spec, index) => (
+                          <li key={index}>
+                            <CheckCircleOutlined />
+                            {spec}
+                          </li>
+                        ))}
+                      </SpecsList>
+
+                      <PriceContainer>
+                        <Price>
+                          {item.price}
+                          <span className="period"> {item.period}</span>
+                        </Price>
+                        <AvailabilityTag
+                          className={item.available ? "available" : "rented"}
+                        >
+                          {item.available ? "Available" : "Rented"}
+                        </AvailabilityTag>
+                      </PriceContainer>
+                    </div>
+                  </RentalCard>
+                </Col>
+              ))}
+            </Row>
+          )}
         </Container>
       </RentalContainer>
 

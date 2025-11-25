@@ -91,10 +91,23 @@ const StyledTable = styled(Table)`
     color: #fff;
     font-weight: 600;
     border: none;
+    font-size: 0.9rem;
+
+    @media (max-width: 768px) {
+      padding: 8px 4px;
+      font-size: 0.8rem;
+    }
   }
 
   .ant-table-tbody > tr:hover > td {
     background: rgba(218, 23, 1, 0.05);
+  }
+
+  .ant-table-tbody > tr > td {
+    @media (max-width: 768px) {
+      padding: 8px 4px;
+      font-size: 0.8rem;
+    }
   }
 
   .ant-table {
@@ -102,6 +115,18 @@ const StyledTable = styled(Table)`
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+
+    @media (max-width: 768px) {
+      .ant-table-content {
+        overflow-x: auto;
+      }
+    }
+  }
+
+  .ant-table-wrapper {
+    @media (max-width: 768px) {
+      overflow-x: auto;
+    }
   }
 `;
 
@@ -113,6 +138,11 @@ const ProductImage = styled.img`
   cursor: pointer;
   transition: transform 0.2s ease;
 
+  @media (max-width: 768px) {
+    width: 40px;
+    height: 40px;
+  }
+
   &:hover {
     transform: scale(1.1);
   }
@@ -123,6 +153,15 @@ const ActionButton = styled(Button)`
   display: flex;
   align-items: center;
   gap: 5px;
+
+  @media (max-width: 768px) {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+
+    .anticon {
+      font-size: 0.8rem;
+    }
+  }
 `;
 
 const PriceTag = styled.span`
@@ -168,52 +207,52 @@ const StyledModal = styled(Modal)`
 
 const RentalAdmin = ({ hideNavFooter = false }) => {
   const [form] = Form.useForm();
-  const [rentals, setRentals] = useState([
-    {
-      id: 1,
-      name: "Canon EOS R5",
-      description: "Professional mirrorless camera with 45MP full-frame sensor",
-      price: "₹2,500",
-      period: "per day",
-      image:
-        "https://images.unsplash.com/photo-1606983340126-99ab4feaa64a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      available: true,
-      rating: 4.8,
-      specs: [
-        "45MP Full Frame Sensor",
-        "8K Video Recording",
-        "Image Stabilization",
-      ],
-      includes: ["Camera Body", "Battery", "Charger", "Memory Card"],
-      category: "camera",
-      createdAt: "2024-01-15",
-    },
-    {
-      id: 2,
-      name: "Sony FX3 Cinema Camera",
-      description: "Full-frame cinema camera for professional video production",
-      price: "₹4,000",
-      period: "per day",
-      image:
-        "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      available: false,
-      rating: 4.9,
-      specs: [
-        "Full Frame 4K 120p",
-        "S-Cinetone Color Science",
-        "Dual Base ISO",
-      ],
-      includes: ["Camera Body", "2x Batteries", "Charger", "Handle"],
-      category: "camera",
-      createdAt: "2024-01-10",
-    },
-  ]);
-
+  const [rentals, setRentals] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [editingRental, setEditingRental] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [fileList, setFileList] = useState([]);
+  const [uploading, setUploading] = useState(false);
+
+  // Fetch rental items from API
+  const fetchRentals = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/wedding/get-rental`
+      );
+      const data = await response.json();
+      console.log(data);
+
+      // Transform API data to match component structure
+      const transformedItems = data.map((item) => ({
+        id: item._id,
+        name: item.name,
+        description: item.description,
+        price: item.price,
+        period: item.period,
+        image: `${process.env.REACT_APP_BASE_URL}/${item.link}`,
+        available: item.available,
+        specification: item.specification,
+        included: item.included,
+        type: item.type,
+      }));
+
+      setRentals(transformedItems);
+    } catch (error) {
+      console.error("Error fetching rental items:", error);
+      message.error("Failed to load rental items");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load data on component mount
+  React.useEffect(() => {
+    fetchRentals();
+  }, []);
 
   const categories = [
     "camera",
@@ -225,47 +264,154 @@ const RentalAdmin = ({ hideNavFooter = false }) => {
   ];
   const periods = ["per hour", "per day", "per week", "per month"];
 
-  const handleSubmit = (values) => {
-    const newRental = {
-      id: editingRental ? editingRental.id : Date.now(),
-      ...values,
-      image:
-        fileList[0]?.url || fileList[0]?.response?.url || editingRental?.image,
-      specs: values.specs
-        ? values.specs.split(",").map((spec) => spec.trim())
-        : [],
-      includes: values.includes
-        ? values.includes.split(",").map((item) => item.trim())
-        : [],
-      createdAt: editingRental
-        ? editingRental.createdAt
-        : new Date().toISOString().split("T")[0],
-    };
-
-    if (editingRental) {
-      setRentals(
-        rentals.map((rental) =>
-          rental.id === editingRental.id ? newRental : rental
-        )
-      );
-      message.success("Rental item updated successfully!");
-    } else {
-      setRentals([...rentals, newRental]);
-      message.success("Rental item added successfully!");
+  // Handle adding new rental
+  const handleAddRental = async (values) => {
+    if (fileList.length === 0) {
+      message.error("Please select an image");
+      return;
     }
 
-    form.resetFields();
-    setFileList([]);
-    setEditingRental(null);
-    setModalVisible(false);
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("type", "image");
+      formData.append("name", values.name);
+      formData.append("price", values.price);
+      formData.append("period", values.period);
+      formData.append("description", values.description || "");
+      formData.append("specification", values.specification || "");
+      formData.append("included", values.included || "");
+
+      if (fileList.length > 0) {
+        formData.append("image", fileList[0].originFileObj || fileList[0]);
+      }
+
+      const response = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/wedding/add-rental`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to add rental item");
+      }
+
+      const data = await response.json();
+      console.log(data);
+
+      message.success("Rental item added successfully!");
+
+      // Refresh the rental list
+      await fetchRentals();
+
+      form.resetFields();
+      setFileList([]);
+      setModalVisible(false);
+    } catch (error) {
+      console.error("Error adding rental:", error);
+      message.error("Failed to add rental item");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // Handle editing existing rental
+  const handleEditRental = async (values) => {
+    console.log(
+      `${process.env.REACT_APP_BASE_URL}/wedding/edit-rental/${editingRental.id}`
+    );
+    setUploading(true);
+    try {
+      const updateData = {
+        type: values.type || "image",
+        name: values.name,
+        price: values.price,
+        period: values.period,
+        description: values.description || "",
+        specification: values.specification || "",
+        included: values.included || "",
+      };
+
+      let response;
+
+      // Check if new image is uploaded
+      if (fileList.length > 0 && fileList[0].originFileObj) {
+        console.log(1);
+        const imageFormData = new FormData();
+        Object.keys(updateData).forEach((key) => {
+          imageFormData.append(key, updateData[key]);
+        });
+        imageFormData.append("image", fileList[0].originFileObj);
+
+        response = await fetch(
+          `${process.env.REACT_APP_BASE_URL}/wedding/edit-rental/${editingRental.id}`,
+          {
+            method: "POST",
+            body: imageFormData,
+          }
+        );
+      } else {
+        console.log(2);
+        console.log(updateData);
+
+        // No new image, send JSON
+        response = await fetch(
+          `${process.env.REACT_APP_BASE_URL}/wedding/edit-rental/${editingRental.id}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updateData),
+          }
+        );
+      }
+      console.log(response.status);
+
+      if (!response.ok) {
+        throw new Error("Failed to update rental item");
+      }
+
+      const data = await response.json();
+      console.log(data);
+
+      message.success("Rental item updated successfully!");
+
+      // Refresh the rental list
+      await fetchRentals();
+
+      form.resetFields();
+      setFileList([]);
+      setEditingRental(null);
+      setModalVisible(false);
+    } catch (error) {
+      console.error("Error updating rental:", error);
+      message.error("Failed to update rental item");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // Combined submit handler that routes to appropriate function
+  const handleSubmit = async (values) => {
+    if (editingRental) {
+      await handleEditRental(values);
+    } else {
+      await handleAddRental(values);
+    }
   };
 
   const handleEdit = (rental) => {
     setEditingRental(rental);
     form.setFieldsValue({
-      ...rental,
-      specs: rental.specs.join(", "),
-      includes: rental.includes.join(", "),
+      name: rental.name,
+      description: rental.description,
+      price: rental.price,
+      period: rental.period,
+      specification: rental.specification,
+      included: rental.included,
     });
     setFileList([
       {
@@ -277,10 +423,41 @@ const RentalAdmin = ({ hideNavFooter = false }) => {
     ]);
     setModalVisible(true);
   };
+  const d = {
+    type: "camera",
+    name: "Sony Alpha A7 IV",
+    price: "3500",
+    period: "per day",
+    description:
+      "Professional full-frame mirrorless camera with 33MP sensor, perfect for photography and videography. Features advanced autofocus, 4K video recording, and excellent low-light performance.",
+    specification:
+      "33MP Full-Frame Exmor R CMOS Sensor, BIONZ XR Image Processor, 4K 60p Video Recording, 5-Axis In-Body Image Stabilization, 693-Point Phase-Detection AF, ISO 100-51200 (Expandable to 204800), 3.0-inch Vari-Angle LCD Touchscreen",
+    included:
+      "Camera Body, NP-FZ100 Battery, BC-QZ1 Battery Charger, Shoulder Strap, Body Cap, Eyepiece Cup, USB Cable, Instruction Manual, 64GB SD Card",
+    available: true,
+  };
 
-  const handleDelete = (id) => {
-    setRentals(rentals.filter((rental) => rental.id !== id));
-    message.success("Rental item deleted successfully!");
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/wedding/delete-rental/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+
+      if (!response.ok) {
+        throw new Error("Failed to delete rental item");
+      }
+
+      await fetchRentals();
+      message.success("Rental item deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting rental:", error);
+      message.error("Failed to delete rental item");
+    }
   };
 
   const handlePreview = (imageUrl) => {
@@ -311,6 +488,8 @@ const RentalAdmin = ({ hideNavFooter = false }) => {
       title: "Image",
       dataIndex: "image",
       key: "image",
+      width: 80,
+      fixed: "left",
       render: (image) => (
         <ProductImage
           src={image}
@@ -323,11 +502,18 @@ const RentalAdmin = ({ hideNavFooter = false }) => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      render: (name, record) => (
+      width: 150,
+      ellipsis: true,
+      render: (name) => (
         <div>
-          <div style={{ fontWeight: 600, color: "#1a1a1a" }}>{name}</div>
-          <div style={{ fontSize: "0.8rem", color: "#666" }}>
-            Rating: {record.rating}/5
+          <div
+            style={{
+              fontWeight: 600,
+              color: "#1a1a1a",
+              fontSize: window.innerWidth <= 768 ? "0.8rem" : "1rem",
+            }}
+          >
+            {name}
           </div>
         </div>
       ),
@@ -336,68 +522,61 @@ const RentalAdmin = ({ hideNavFooter = false }) => {
       title: "Price",
       dataIndex: "price",
       key: "price",
+      width: 120,
       render: (price, record) => (
         <div>
-          <PriceTag>{price}</PriceTag>
-          <div style={{ fontSize: "0.8rem", color: "#666" }}>
+          <PriceTag>₹{price}</PriceTag>
+          <div style={{ fontSize: "0.7rem", color: "#666" }}>
             {record.period}
           </div>
         </div>
       ),
     },
     {
-      title: "Category",
-      dataIndex: "category",
-      key: "category",
-      render: (category) => <Tag color="blue">{category}</Tag>,
+      title: "Type",
+      dataIndex: "type",
+      key: "type",
+      width: 100,
+      render: (type) => (
+        <Tag color="blue" style={{ fontSize: "0.7rem" }}>
+          {type}
+        </Tag>
+      ),
+      responsive: ["md"],
     },
     {
       title: "Status",
       dataIndex: "available",
       key: "available",
+      width: 100,
       render: (available) => (
-        <Tag color={available ? "green" : "red"}>
+        <Tag color={available ? "green" : "red"} style={{ fontSize: "0.7rem" }}>
           {available ? "Available" : "Rented"}
         </Tag>
       ),
     },
     {
-      title: "Specs",
-      dataIndex: "specs",
-      key: "specs",
-      render: (specs) => (
-        <SpecsList>
-          {specs.slice(0, 2).map((spec, index) => (
-            <div key={index} className="spec-item">
-              {spec}
-            </div>
-          ))}
-          {specs.length > 2 && (
-            <div className="spec-item">+{specs.length - 2} more</div>
-          )}
-        </SpecsList>
-      ),
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+      ellipsis: true,
+      width: 150,
+      responsive: ["lg"],
     },
     {
       title: "Actions",
       key: "actions",
+      width: 180,
+      fixed: "right",
       render: (_, record) => (
-        <Space size="small">
-          <ActionButton
-            type="primary"
-            size="small"
-            onClick={() => handlePreview(record.image)}
-            icon={<EyeOutlined />}
-          >
-            View
-          </ActionButton>
+        <Space size="small" wrap>
           <ActionButton
             type="default"
             size="small"
             onClick={() => handleEdit(record)}
             icon={<EditOutlined />}
           >
-            Edit
+            {window.innerWidth <= 768 ? "" : "Edit"}
           </ActionButton>
           <Popconfirm
             title="Are you sure you want to delete this item?"
@@ -406,7 +585,7 @@ const RentalAdmin = ({ hideNavFooter = false }) => {
             cancelText="No"
           >
             <ActionButton danger size="small" icon={<DeleteOutlined />}>
-              Delete
+              {window.innerWidth <= 768 ? "" : "Delete"}
             </ActionButton>
           </Popconfirm>
         </Space>
@@ -435,13 +614,16 @@ const RentalAdmin = ({ hideNavFooter = false }) => {
               columns={columns}
               dataSource={rentals}
               rowKey="id"
+              loading={loading}
               pagination={{
-                pageSize: 8,
+                pageSize: window.innerWidth <= 768 ? 5 : 8,
                 showTotal: (total) => `Total ${total} items`,
-                showSizeChanger: true,
-                showQuickJumper: true,
+                showSizeChanger: window.innerWidth > 768,
+                showQuickJumper: window.innerWidth > 768,
+                simple: window.innerWidth <= 768,
               }}
-              scroll={{ x: 1200 }}
+              scroll={{ x: 800, y: window.innerWidth <= 768 ? 400 : undefined }}
+              size={window.innerWidth <= 768 ? "small" : "middle"}
             />
           </Card>
 
@@ -471,20 +653,10 @@ const RentalAdmin = ({ hideNavFooter = false }) => {
             >
               <Form.Item
                 name="name"
-                label="Item Name"
+                label="Name"
                 rules={[{ required: true, message: "Please enter item name" }]}
               >
                 <Input placeholder="Enter item name" />
-              </Form.Item>
-
-              <Form.Item
-                name="description"
-                label="Description"
-                rules={[
-                  { required: true, message: "Please enter description" },
-                ]}
-              >
-                <TextArea rows={3} placeholder="Enter item description" />
               </Form.Item>
 
               <div style={{ display: "flex", gap: "16px" }}>
@@ -492,86 +664,34 @@ const RentalAdmin = ({ hideNavFooter = false }) => {
                   name="price"
                   label="Price"
                   rules={[{ required: true, message: "Please enter price" }]}
-                  style={{ flex: 2 }}
+                  style={{ flex: 1 }}
                 >
-                  <Input placeholder="₹2,500" />
+                  <InputNumber
+                    placeholder="2500"
+                    style={{ width: "100%" }}
+                    min={0}
+                  />
                 </Form.Item>
                 <Form.Item
                   name="period"
                   label="Period"
-                  rules={[{ required: true, message: "Please select period" }]}
+                  rules={[{ required: true, message: "Please enter period" }]}
                   style={{ flex: 1 }}
                 >
-                  <Select placeholder="Select period">
-                    {periods.map((period) => (
-                      <Option key={period} value={period}>
-                        {period}
-                      </Option>
-                    ))}
-                  </Select>
+                  <Input placeholder="per day" />
                 </Form.Item>
               </div>
 
-              <div style={{ display: "flex", gap: "16px" }}>
-                <Form.Item
-                  name="category"
-                  label="Category"
-                  rules={[
-                    { required: true, message: "Please select category" },
-                  ]}
-                  style={{ flex: 2 }}
-                >
-                  <Select placeholder="Select category">
-                    {categories.map((category) => (
-                      <Option key={category} value={category}>
-                        {category.charAt(0).toUpperCase() + category.slice(1)}
-                      </Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-                <Form.Item
-                  name="rating"
-                  label="Rating"
-                  rules={[{ required: true, message: "Please enter rating" }]}
-                  style={{ flex: 1 }}
-                >
-                  <InputNumber
-                    min={1}
-                    max={5}
-                    step={0.1}
-                    placeholder="4.8"
-                    style={{ width: "100%" }}
-                  />
-                </Form.Item>
-              </div>
-
-              <Form.Item
-                name="available"
-                label="Availability"
-                valuePropName="checked"
-                initialValue={true}
-              >
-                <Switch
-                  checkedChildren="Available"
-                  unCheckedChildren="Rented"
-                />
+              <Form.Item name="description" label="Description (optional)">
+                <TextArea rows={3} placeholder="Enter item description" />
               </Form.Item>
 
-              <Form.Item name="specs" label="Specifications (comma separated)">
-                <TextArea
-                  rows={2}
-                  placeholder="45MP Full Frame Sensor, 8K Video Recording, Image Stabilization"
-                />
+              <Form.Item name="specification" label="Specifications (optional)">
+                <TextArea rows={2} placeholder="Spec 1, Spec 2, Spec 3" />
               </Form.Item>
 
-              <Form.Item
-                name="includes"
-                label="What's Included (comma separated)"
-              >
-                <TextArea
-                  rows={2}
-                  placeholder="Camera Body, Battery, Charger, Memory Card"
-                />
+              <Form.Item name="included" label="What's Included (optional)">
+                <TextArea rows={2} placeholder="Item 1, Item 2, Item 3" />
               </Form.Item>
 
               <Form.Item
@@ -591,8 +711,12 @@ const RentalAdmin = ({ hideNavFooter = false }) => {
 
               <Form.Item style={{ marginBottom: 0 }}>
                 <Space>
-                  <Button type="primary" htmlType="submit">
-                    {editingRental ? "Update Item" : "Add Item"}
+                  <Button type="primary" htmlType="submit" loading={uploading}>
+                    {uploading
+                      ? "Saving..."
+                      : editingRental
+                      ? "Update Item"
+                      : "Add Item"}
                   </Button>
                   <Button
                     onClick={() => {

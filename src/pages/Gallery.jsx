@@ -1,9 +1,11 @@
-import React, { useState } from "react";
-import { Row, Col, Typography, Tabs, Modal } from "antd";
+import React, { useState, useEffect } from "react";
+import { Row, Col, Typography, Tabs, Modal, Spin, message } from "antd";
 import {
   CameraOutlined,
   VideoCameraOutlined,
   PlayCircleOutlined,
+  LeftOutlined,
+  RightOutlined,
 } from "@ant-design/icons";
 import styled from "styled-components";
 import FloatingNav from "../components/FloatingNav";
@@ -122,7 +124,8 @@ const StyledTabs = styled(Tabs)`
     justify-content: center;
     align-items: center;
     width: 100%;
-
+    padding-top: 1rem;
+    padding-bottom: 1rem;
     &::before {
       display: none !important;
     }
@@ -402,7 +405,8 @@ const StyledModal = styled(Modal)`
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 70vh;
+    min-height: 80vh;
+    max-height: 90vh;
   }
 
   .ant-modal-footer {
@@ -412,17 +416,115 @@ const StyledModal = styled(Modal)`
 
 const FullscreenMedia = styled.div`
   width: 100%;
-  height: 100%;
+  height: 80vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 20px;
+  overflow: hidden;
 
-  img,
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 10px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: ${(props) => {
+      if (props.isSliding && props.slideDirection === "next") {
+        return "translateX(100%)";
+      }
+      if (props.isSliding && props.slideDirection === "prev") {
+        return "translateX(-100%)";
+      }
+      return "translateX(0)";
+    }};
+    opacity: ${(props) => (props.isSliding ? "0" : "1")};
+  }
+
   video {
     max-width: 100%;
     max-height: 100%;
+    width: auto;
+    height: auto;
     object-fit: contain;
     border-radius: 10px;
+  }
+
+  @media (max-width: 768px) {
+    height: 70vh;
+    padding: 15px;
+  }
+
+  @media (max-width: 480px) {
+    height: 60vh;
+    padding: 10px;
+  }
+`;
+
+const NavigationButton = styled.button`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 1002;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.7);
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  &.prev {
+    left: 20px;
+  }
+
+  &.next {
+    right: 20px;
+  }
+
+  @media (max-width: 768px) {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+
+    &.prev {
+      left: 10px;
+    }
+
+    &.next {
+      right: 10px;
+    }
+  }
+`;
+
+const PhotoCounter = styled.div`
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  z-index: 1002;
+
+  @media (max-width: 768px) {
+    bottom: 10px;
+    font-size: 12px;
+    padding: 6px 12px;
   }
 `;
 
@@ -430,284 +532,248 @@ const Gallery = () => {
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [activeTab, setActiveTab] = useState("photos");
+  const [photoGallery, setPhotoGallery] = useState([]);
+  const [videoGallery, setVideoGallery] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+  const [slideDirection, setSlideDirection] = useState("next");
+  const [isSliding, setIsSliding] = useState(false);
 
-  const photoGallery = [
-    {
-      id: 1,
-      title: "Romantic Wedding Ceremony",
-      description:
-        "A beautiful outdoor wedding ceremony captured in golden hour light",
-      image:
-        "https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      tags: ["Wedding", "Outdoor", "Golden Hour"],
-      likes: 124,
-      views: 2340,
-      category: "wedding",
-    },
-    {
-      id: 2,
-      title: "Elegant Bridal Portrait",
-      description:
-        "Stunning bridal portrait with natural lighting and classic elegance",
-      image:
-        "https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      tags: ["Bridal", "Portrait", "Studio"],
-      likes: 98,
-      views: 1890,
-      category: "portrait",
-    },
-    {
-      id: 3,
-      title: "Pre-Wedding Adventure",
-      description: "Adventurous couple session in the mountains during sunset",
-      image:
-        "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      tags: ["Pre-Wedding", "Adventure", "Sunset"],
-      likes: 156,
-      views: 2890,
-      category: "engagement",
-    },
-    {
-      id: 4,
-      title: "Reception Celebration",
-      description:
-        "Joyful moments from a wedding reception filled with dancing and laughter",
-      image:
-        "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      tags: ["Reception", "Dancing", "Celebration"],
-      likes: 189,
-      views: 3210,
-      category: "wedding",
-    },
-    {
-      id: 5,
-      title: "Intimate Engagement",
-      description:
-        "Sweet and intimate engagement session in a cozy coffee shop",
-      image:
-        "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      tags: ["Engagement", "Intimate", "Indoor"],
-      likes: 87,
-      views: 1560,
-      category: "engagement",
-    },
-    {
-      id: 6,
-      title: "Family Celebration",
-      description:
-        "Multi-generational family celebrating together during wedding festivities",
-      image:
-        "https://images.unsplash.com/photo-1606216794074-735e91aa2c92?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      tags: ["Family", "Celebration", "Group"],
-      likes: 145,
-      views: 2100,
-      category: "family",
-    },
-  ];
+  // Fetch images from API
+  const fetchImages = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/wedding/gallery/image`
+      );
+      const data = await response.json();
 
-  const videoGallery = [
-    {
-      id: 1,
-      title: "Wedding Highlights Reel",
-      description:
-        "A cinematic highlight reel capturing the best moments of a beautiful wedding day",
-      thumbnail:
-        "https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      videoUrl: "https://player.vimeo.com/video/123456789",
-      tags: ["Wedding", "Cinematic", "Highlights"],
-      likes: 234,
-      views: 5670,
-      duration: "3:45",
-      category: "wedding",
-    },
-    {
-      id: 2,
-      title: "Love Story Documentary",
-      description:
-        "A heartfelt documentary showcasing the couple's journey to their wedding day",
-      thumbnail:
-        "https://images.unsplash.com/photo-1537633552985-df8429e8048b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      videoUrl: "https://player.vimeo.com/video/123456790",
-      tags: ["Documentary", "Love Story", "Emotional"],
-      likes: 187,
-      views: 4230,
-      duration: "8:20",
-      category: "story",
-    },
-    {
-      id: 2,
-      title: "Love Story Documentary",
-      description:
-        "A heartfelt documentary showcasing the couple's journey to their wedding day",
-      thumbnail:
-        "https://images.unsplash.com/photo-1537633552985-df8429e8048b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      videoUrl: "https://player.vimeo.com/video/123456790",
-      tags: ["Documentary", "Love Story", "Emotional"],
-      likes: 187,
-      views: 4230,
-      duration: "8:20",
-      category: "story",
-    },
-    {
-      id: 2,
-      title: "Love Story Documentary",
-      description:
-        "A heartfelt documentary showcasing the couple's journey to their wedding day",
-      thumbnail:
-        "https://images.unsplash.com/photo-1537633552985-df8429e8048b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      videoUrl: "https://player.vimeo.com/video/123456790",
-      tags: ["Documentary", "Love Story", "Emotional"],
-      likes: 187,
-      views: 4230,
-      duration: "8:20",
-      category: "story",
-    },
-    {
-      id: 2,
-      title: "Love Story Documentary",
-      description:
-        "A heartfelt documentary showcasing the couple's journey to their wedding day",
-      thumbnail:
-        "https://images.unsplash.com/photo-1537633552985-df8429e8048b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      videoUrl: "https://player.vimeo.com/video/123456790",
-      tags: ["Documentary", "Love Story", "Emotional"],
-      likes: 187,
-      views: 4230,
-      duration: "8:20",
-      category: "story",
-    },
-    {
-      id: 2,
-      title: "Love Story Documentary",
-      description:
-        "A heartfelt documentary showcasing the couple's journey to their wedding day",
-      thumbnail:
-        "https://images.unsplash.com/photo-1537633552985-df8429e8048b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      videoUrl: "https://player.vimeo.com/video/123456790",
-      tags: ["Documentary", "Love Story", "Emotional"],
-      likes: 187,
-      views: 4230,
-      duration: "8:20",
-      category: "story",
-    },
-    {
-      id: 2,
-      title: "Love Story Documentary",
-      description:
-        "A heartfelt documentary showcasing the couple's journey to their wedding day",
-      thumbnail:
-        "https://images.unsplash.com/photo-1537633552985-df8429e8048b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      videoUrl: "https://player.vimeo.com/video/123456790",
-      tags: ["Documentary", "Love Story", "Emotional"],
-      likes: 187,
-      views: 4230,
-      duration: "8:20",
-      category: "story",
-    },
-    {
-      id: 2,
-      title: "Love Story Documentary",
-      description:
-        "A heartfelt documentary showcasing the couple's journey to their wedding day",
-      thumbnail:
-        "https://images.unsplash.com/photo-1537633552985-df8429e8048b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      videoUrl: "https://player.vimeo.com/video/123456790",
-      tags: ["Documentary", "Love Story", "Emotional"],
-      likes: 187,
-      views: 4230,
-      duration: "8:20",
-      category: "story",
-    },
-    {
-      id: 3,
-      title: "Pre-Wedding Adventure Film",
-      description:
-        "An adventurous pre-wedding film shot in stunning mountain landscapes",
-      thumbnail:
-        "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      videoUrl: "https://player.vimeo.com/video/123456791",
-      tags: ["Pre-Wedding", "Adventure", "Nature"],
-      likes: 156,
-      views: 3890,
-      duration: "5:12",
-      category: "engagement",
-    },
-    {
-      id: 4,
-      title: "Ceremony Moments",
-      description:
-        "Sacred and emotional moments from a traditional wedding ceremony",
-      thumbnail:
-        "https://images.unsplash.com/photo-1583939003579-730e3918a45a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      videoUrl: "https://player.vimeo.com/video/123456792",
-      tags: ["Ceremony", "Traditional", "Sacred"],
-      likes: 198,
-      views: 4560,
-      duration: "6:30",
-      category: "wedding",
-    },
-    {
-      id: 5,
-      title: "Reception Dancing",
-      description:
-        "High-energy reception footage with amazing dance performances and celebrations",
-      thumbnail:
-        "https://images.unsplash.com/photo-1546525848-3ce03ca516f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      videoUrl: "https://player.vimeo.com/video/123456793",
-      tags: ["Reception", "Dancing", "Energy"],
-      likes: 267,
-      views: 6120,
-      duration: "4:18",
-      category: "reception",
-    },
-    {
-      id: 6,
-      title: "Couple's First Look",
-      description:
-        "Intimate and emotional first look moment between bride and groom",
-      thumbnail:
-        "https://images.unsplash.com/photo-1525772764200-be829a350797?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      videoUrl: "https://player.vimeo.com/video/123456794",
-      tags: ["First Look", "Intimate", "Emotional"],
-      likes: 143,
-      views: 3450,
-      duration: "2:55",
-      category: "intimate",
-    },
-  ];
+      // Transform API data to match component structure
+      const transformedImages = data.map((item) => ({
+        id: item._id,
+        title: "Wedding Photo",
+        description: "Beautiful wedding moment captured with love",
+        image: `${process.env.REACT_APP_BASE_URL}/` + item.link,
+        tags: ["Wedding", "Photography"],
+        likes: Math.floor(Math.random() * 200) + 50,
+        views: Math.floor(Math.random() * 3000) + 1000,
+        category: "wedding",
+        createdAt: item.createdAt,
+      }));
 
-  const showFullscreen = (item, type) => {
-    setSelectedMedia({ ...item, type });
+      setPhotoGallery(transformedImages);
+    } catch (error) {
+      console.error("Error fetching images:", error);
+      message.error("Failed to load images");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch videos from API
+  const fetchVideos = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/wedding/gallery/video`
+      );
+      console.log(`${process.env.REACT_APP_BASE_URL}/wedding/gallery/video`);
+      const data = await response.json();
+
+      // Transform API data to match component structure
+      const transformedVideos = data.map((item) => ({
+        id: item._id,
+        title: "Wedding Video",
+        description: "Cinematic wedding moment captured beautifully",
+        thumbnail: `${process.env.REACT_APP_BASE_URL}/` + item.link,
+        videoUrl: `${process.env.REACT_APP_BASE_URL}/` + item.link,
+        tags: ["Wedding", "Videography"],
+        likes: Math.floor(Math.random() * 300) + 100,
+        views: Math.floor(Math.random() * 5000) + 2000,
+        duration: "3:45",
+        category: "wedding",
+        createdAt: item.createdAt,
+      }));
+
+      setVideoGallery(transformedVideos);
+    } catch (error) {
+      console.error("Error fetching videos:", error);
+      message.error("Failed to load videos");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load data based on active tab
+  useEffect(() => {
+    if (activeTab === "photos") {
+      fetchImages();
+    } else if (activeTab === "videos") {
+      fetchVideos();
+    }
+  }, [activeTab]);
+
+  const showFullscreen = (item, type, index = 0) => {
+    if (type === "photo") {
+      setCurrentPhotoIndex(index);
+      setSelectedMedia({ ...photoGallery[index], type });
+    } else {
+      setSelectedMedia({ ...item, type });
+    }
     setModalVisible(true);
   };
 
-  const renderPhotoGrid = () => (
-    <Row gutter={[15, 15]}>
-      {photoGallery.map((photo) => (
-        <Col xs={12} sm={8} md={6} lg={4} key={photo.id}>
-          <GalleryItem onClick={() => showFullscreen(photo, "photo")}>
-            <img alt={photo.title} src={photo.image} />
-          </GalleryItem>
-        </Col>
-      ))}
-    </Row>
-  );
+  // Navigation functions for slideshow with animation
+  const goToPrevious = () => {
+    if (isSliding) return; // Prevent rapid clicking
+    setSlideDirection("prev");
+    setIsSliding(true);
 
-  const renderVideoGrid = () => (
-    <Row gutter={[15, 15]}>
-      {videoGallery.map((video) => (
-        <Col xs={12} sm={8} md={6} lg={4} key={video.id}>
-          <GalleryItem onClick={() => showFullscreen(video, "video")}>
-            <img alt={video.title} src={video.thumbnail} />
-            <VideoOverlay>
-              <PlayCircleOutlined className="play-button" />
-            </VideoOverlay>
-            <VideoDuration>{video.duration}</VideoDuration>
-          </GalleryItem>
-        </Col>
-      ))}
-    </Row>
-  );
+    const newIndex =
+      currentPhotoIndex > 0 ? currentPhotoIndex - 1 : photoGallery.length - 1;
+
+    setTimeout(() => {
+      setCurrentPhotoIndex(newIndex);
+      setSelectedMedia({ ...photoGallery[newIndex], type: "photo" });
+      setIsSliding(false);
+    }, 150);
+  };
+
+  const goToNext = () => {
+    if (isSliding) return; // Prevent rapid clicking
+    setSlideDirection("next");
+    setIsSliding(true);
+
+    const newIndex =
+      currentPhotoIndex < photoGallery.length - 1 ? currentPhotoIndex + 1 : 0;
+
+    setTimeout(() => {
+      setCurrentPhotoIndex(newIndex);
+      setSelectedMedia({ ...photoGallery[newIndex], type: "photo" });
+      setIsSliding(false);
+    }, 150);
+  };
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (modalVisible && selectedMedia?.type === "photo") {
+        if (e.key === "ArrowLeft") {
+          goToPrevious();
+        } else if (e.key === "ArrowRight") {
+          goToNext();
+        } else if (e.key === "Escape") {
+          setModalVisible(false);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [modalVisible, selectedMedia, currentPhotoIndex, photoGallery]);
+
+  const renderPhotoGrid = () => {
+    if (loading) {
+      return (
+        <div style={{ textAlign: "center", padding: "60px 20px" }}>
+          <Spin size="large" />
+          <p style={{ marginTop: 16, color: "#666" }}>Loading images...</p>
+        </div>
+      );
+    }
+
+    if (photoGallery.length === 0) {
+      return (
+        <div
+          style={{ textAlign: "center", padding: "60px 20px", color: "#666" }}
+        >
+          <CameraOutlined
+            style={{ fontSize: "64px", color: "#ddd", marginBottom: "16px" }}
+          />
+          <h3 style={{ color: "#999" }}>No Photos Available</h3>
+          <p style={{ color: "#bbb" }}>Photos will appear here once uploaded</p>
+        </div>
+      );
+    }
+
+    return (
+      <Row gutter={[15, 15]}>
+        {photoGallery.map((photo, index) => (
+          <Col xs={12} sm={8} md={6} lg={4} key={photo.id}>
+            <GalleryItem onClick={() => showFullscreen(photo, "photo", index)}>
+              <img
+                alt={photo.title}
+                src={photo.image}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  objectPosition: "center",
+                  display: "block",
+                }}
+              />
+            </GalleryItem>
+          </Col>
+        ))}
+      </Row>
+    );
+  };
+
+  const renderVideoGrid = () => {
+    if (loading) {
+      return (
+        <div style={{ textAlign: "center", padding: "60px 20px" }}>
+          <Spin size="large" />
+          <p style={{ marginTop: 16, color: "#666" }}>Loading videos...</p>
+        </div>
+      );
+    }
+
+    if (videoGallery.length === 0) {
+      return (
+        <div
+          style={{ textAlign: "center", padding: "60px 20px", color: "#666" }}
+        >
+          <VideoCameraOutlined
+            style={{ fontSize: "64px", color: "#ddd", marginBottom: "16px" }}
+          />
+          <h3 style={{ color: "#999" }}>No Videos Available</h3>
+          <p style={{ color: "#bbb" }}>Videos will appear here once uploaded</p>
+        </div>
+      );
+    }
+
+    return (
+      <Row gutter={[15, 15]}>
+        {videoGallery.map((video) => (
+          <Col xs={12} sm={8} md={6} lg={4} key={video.id}>
+            <GalleryItem onClick={() => showFullscreen(video, "video")}>
+              {/* <img alt={video.title} src={video.thumbnail} /> */}
+              <video
+                src={video.videoUrl}
+                // muted
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  objectPosition: "center",
+                  display: "block",
+                }}
+                onMouseEnter={(e) => e.target.play()}
+                onMouseLeave={(e) => {
+                  e.target.pause();
+                  e.target.currentTime = 0;
+                }}
+              />
+              <VideoOverlay>
+                <PlayCircleOutlined className="play-button" />
+              </VideoOverlay>
+            </GalleryItem>
+          </Col>
+        ))}
+      </Row>
+    );
+  };
 
   return (
     <>
@@ -765,20 +831,41 @@ const Gallery = () => {
         centered
       >
         {selectedMedia && (
-          <FullscreenMedia>
-            {selectedMedia.type === "photo" ? (
-              <img src={selectedMedia.image} alt={selectedMedia.title} />
-            ) : (
-              <video
-                controls
-                poster={selectedMedia.thumbnail}
-                style={{ width: "100%", height: "100%" }}
-              >
-                <source src={selectedMedia.videoUrl} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+          <>
+            <FullscreenMedia
+              isSliding={isSliding}
+              slideDirection={slideDirection}
+            >
+              {selectedMedia.type === "photo" ? (
+                <img src={selectedMedia.image} alt={selectedMedia.title} />
+              ) : (
+                <video
+                  controls
+                  poster={selectedMedia.thumbnail}
+                  style={{ width: "100%", height: "100%" }}
+                  src={selectedMedia.videoUrl}
+                  autoPlay
+                >
+                  Your browser does not support the video tag.
+                </video>
+              )}
+            </FullscreenMedia>
+
+            {/* Navigation buttons for photo slideshow */}
+            {selectedMedia.type === "photo" && photoGallery.length > 1 && (
+              <>
+                <NavigationButton className="prev" onClick={goToPrevious}>
+                  <LeftOutlined />
+                </NavigationButton>
+                <NavigationButton className="next" onClick={goToNext}>
+                  <RightOutlined />
+                </NavigationButton>
+                <PhotoCounter>
+                  {currentPhotoIndex + 1} of {photoGallery.length}
+                </PhotoCounter>
+              </>
             )}
-          </FullscreenMedia>
+          </>
         )}
       </StyledModal>
 

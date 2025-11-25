@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Card, Button, Upload, Modal, message, Popconfirm } from "antd";
+import React, { useState, useEffect } from "react";
+import { Card, Button, Upload, Modal, message, Popconfirm, Spin } from "antd";
 import {
   PlusOutlined,
   DeleteOutlined,
@@ -233,34 +233,46 @@ const StyledModal = styled(Modal)`
 `;
 
 const VideoAdmin = ({ hideNavFooter = false }) => {
-  const [videos, setVideos] = useState([
-    {
-      id: 1,
-      videoUrl:
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-      createdAt: "2024-01-15",
-    },
-    {
-      id: 2,
-      videoUrl:
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-      createdAt: "2024-01-10",
-    },
-    {
-      id: 3,
-      videoUrl:
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-      createdAt: "2024-01-08",
-    },
-  ]);
-
+  const [videos, setVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewVideo, setPreviewVideo] = useState("");
   const [uploading, setUploading] = useState(false);
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
   const [fileList, setFileList] = useState([]);
 
-  const handleUploadComplete = () => {
+  // Fetch videos from API
+  const fetchVideos = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/wedding/gallery/video`
+      );
+      const data = await response.json();
+
+      // Transform API data to match component structure
+      const transformedVideos = data.map((item) => ({
+        id: item._id,
+        videoUrl: `${process.env.REACT_APP_BASE_URL}/` + item.link,
+        createdAt: item.createdAt
+          ? new Date(item.createdAt).toISOString().split("T")[0]
+          : new Date().toISOString().split("T")[0],
+      }));
+
+      setVideos(transformedVideos);
+    } catch (error) {
+      console.error("Error fetching videos:", error);
+      message.error("Failed to load videos");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchVideos();
+  }, []);
+
+  const handleUploadComplete = async () => {
     if (fileList.length === 0) {
       message.warning("Please select at least one video");
       return;
@@ -268,20 +280,42 @@ const VideoAdmin = ({ hideNavFooter = false }) => {
 
     setUploading(true);
 
-    // Process all selected files
-    const newVideos = fileList.map((file) => ({
-      id: Date.now() + Math.random(),
-      videoUrl: file.url || URL.createObjectURL(file.originFileObj),
-      createdAt: new Date().toISOString().split("T")[0],
-    }));
+    try {
+      // Process each selected file
+      const uploadPromises = fileList.map(async (file) => {
+        const formData = new FormData();
+        formData.append("video", file.originFileObj);
+        formData.append("type", "video");
 
-    setTimeout(() => {
-      setVideos([...newVideos, ...videos]);
+        const response = await fetch(
+          `${process.env.REACT_APP_BASE_URL}/wedding/add-gallery`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to upload video");
+        }
+
+        return response.json();
+      });
+
+      await Promise.all(uploadPromises);
+
+      // Refresh the video list after upload
+      await fetchVideos();
+
       setUploading(false);
       setUploadModalVisible(false);
       setFileList([]);
-      message.success(`${newVideos.length} video(s) uploaded successfully!`);
-    }, 1500);
+      message.success(`${fileList.length} video(s) uploaded successfully!`);
+    } catch (error) {
+      console.error("Error uploading videos:", error);
+      message.error("Failed to upload videos");
+      setUploading(false);
+    }
   };
 
   const handleUploadChange = ({ fileList: newFileList }) => {
@@ -296,9 +330,25 @@ const VideoAdmin = ({ hideNavFooter = false }) => {
     setPreviewVisible(true);
   };
 
-  const handleDelete = (id) => {
-    setVideos(videos.filter((video) => video.id !== id));
-    message.success("Video deleted successfully!");
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/wedding/delete-gallery/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (response.ok) {
+        setVideos(videos.filter((video) => video.id !== id));
+        message.success("Video deleted successfully!");
+      } else {
+        message.error("Failed to delete video");
+      }
+    } catch (error) {
+      console.error("Error deleting video:", error);
+      message.error("Failed to delete video");
+    }
   };
 
   const handlePreview = (videoUrl) => {
@@ -324,7 +374,14 @@ const VideoAdmin = ({ hideNavFooter = false }) => {
           </PageHeader>
 
           <Card>
-            {videos.length === 0 ? (
+            {loading ? (
+              <div style={{ textAlign: "center", padding: "60px 20px" }}>
+                <Spin size="large" />
+                <p style={{ marginTop: 16, color: "#666" }}>
+                  Loading videos...
+                </p>
+              </div>
+            ) : videos.length === 0 ? (
               <EmptyState>
                 <div className="empty-icon">
                   <VideoCameraOutlined />
