@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Card, Button, Upload, Modal, message, Popconfirm, Spin } from "antd";
+import {
+  Card,
+  Button,
+  Upload,
+  Modal,
+  message,
+  Popconfirm,
+  Spin,
+  Select,
+  Form,
+} from "antd";
 import {
   PlusOutlined,
   DeleteOutlined,
@@ -9,6 +19,8 @@ import {
 import styled from "styled-components";
 import FloatingNav from "../components/FloatingNav";
 import Footer from "../components/Footer";
+
+const { Option } = Select;
 
 const AdminContainer = styled.div`
   padding: ${(props) => (props.hideNavFooter ? "40px 0" : "120px 0 60px 0")};
@@ -240,6 +252,17 @@ const VideoAdmin = ({ hideNavFooter = false }) => {
   const [uploading, setUploading] = useState(false);
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
   const [fileList, setFileList] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [form] = Form.useForm();
+
+  const categories = [
+    "Wedding",
+    "Pre-Wedding",
+    "Engagement",
+    "Reception",
+    "Bridal Portraits",
+    "Event Photography",
+  ];
 
   // Fetch videos from API
   const fetchVideos = async () => {
@@ -278,6 +301,11 @@ const VideoAdmin = ({ hideNavFooter = false }) => {
       return;
     }
 
+    if (!selectedCategory) {
+      message.warning("Please select a category");
+      return;
+    }
+
     setUploading(true);
 
     try {
@@ -286,6 +314,7 @@ const VideoAdmin = ({ hideNavFooter = false }) => {
         const formData = new FormData();
         formData.append("video", file.originFileObj);
         formData.append("type", "video");
+        formData.append("category", selectedCategory);
 
         const response = await fetch(
           `${process.env.REACT_APP_BASE_URL}/wedding/add-gallery`,
@@ -310,6 +339,8 @@ const VideoAdmin = ({ hideNavFooter = false }) => {
       setUploading(false);
       setUploadModalVisible(false);
       setFileList([]);
+      setSelectedCategory("");
+      form.resetFields();
       message.success(`${fileList.length} video(s) uploaded successfully!`);
     } catch (error) {
       console.error("Error uploading videos:", error);
@@ -445,6 +476,8 @@ const VideoAdmin = ({ hideNavFooter = false }) => {
             onCancel={() => {
               setUploadModalVisible(false);
               setFileList([]);
+              setSelectedCategory("");
+              form.resetFields();
             }}
             footer={[
               <Button
@@ -452,6 +485,8 @@ const VideoAdmin = ({ hideNavFooter = false }) => {
                 onClick={() => {
                   setUploadModalVisible(false);
                   setFileList([]);
+                  setSelectedCategory("");
+                  form.resetFields();
                 }}
               >
                 Cancel
@@ -461,6 +496,7 @@ const VideoAdmin = ({ hideNavFooter = false }) => {
                 type="primary"
                 loading={uploading}
                 onClick={handleUploadComplete}
+                disabled={!selectedCategory || fileList.length === 0}
                 style={{
                   background: "linear-gradient(135deg, #DA1701, #B81501)",
                   border: "none",
@@ -473,6 +509,30 @@ const VideoAdmin = ({ hideNavFooter = false }) => {
             ]}
             width={700}
           >
+            <Form form={form} layout="vertical" style={{ marginTop: 20 }}>
+              <Form.Item
+                label="Category"
+                name="category"
+                rules={[
+                  { required: true, message: "Please select a category" },
+                ]}
+              >
+                <Select
+                  placeholder="Select video category"
+                  value={selectedCategory}
+                  onChange={setSelectedCategory}
+                  size="large"
+                  style={{ width: "100%" }}
+                >
+                  {categories.map((category) => (
+                    <Option key={category} value={category}>
+                      {category}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Form>
+
             <div style={{ marginTop: 20 }}>
               <Upload
                 listType="picture-card"
@@ -513,6 +573,11 @@ const VideoAdmin = ({ hideNavFooter = false }) => {
                 >
                   <strong>Selected:</strong> {fileList.length} video(s) ready to
                   upload
+                  {selectedCategory && (
+                    <span style={{ marginLeft: 8 }}>
+                      | Category: <strong>{selectedCategory}</strong>
+                    </span>
+                  )}
                 </div>
               )}
             </div>

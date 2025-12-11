@@ -271,30 +271,32 @@ const RentalService = () => {
       const data = await response.json();
       console.log(data);
 
-      // Transform API data to match component structure
-      const transformedItems = data.map((item) => ({
-        id: item._id,
-        name: item.name,
-        description: item.description,
-        price: `₹${item.price}`,
-        period: item.period,
-        image: `${process.env.REACT_APP_BASE_URL}/${item.link}`,
-        available: item.available,
-        specification: item.specification
-          ? item.specification.split(",").map((s) => s.trim())
-          : [],
-        included: item.included
-          ? item.included.split(",").map((s) => s.trim())
-          : [],
-        type: item.type,
-        rating: 4.5, // Default rating since it's not in schema
-        specs: item.specification
-          ? item.specification.split(",").map((s) => s.trim())
-          : [],
-        includes: item.included
-          ? item.included.split(",").map((s) => s.trim())
-          : [],
-      }));
+      // Transform API data to match component structure and filter only available items
+      const transformedItems = data
+        .filter((item) => item.available) // Only show available items
+        .map((item) => ({
+          id: item._id,
+          name: item.name,
+          description: item.description,
+          price: `₹${item.price}`,
+          period: item.period,
+          image: `${process.env.REACT_APP_BASE_URL}/${item.link}`,
+          available: item.available,
+          specification: item.specification
+            ? item.specification.split(",").map((s) => s.trim())
+            : [],
+          included: item.included
+            ? item.included.split(",").map((s) => s.trim())
+            : [],
+          type: item.type,
+          rating: 4.5, // Default rating since it's not in schema
+          specs: item.specification
+            ? item.specification.split(",").map((s) => s.trim())
+            : [],
+          includes: item.included
+            ? item.included.split(",").map((s) => s.trim())
+            : [],
+        }));
 
       setRentals(transformedItems);
     } catch (error) {

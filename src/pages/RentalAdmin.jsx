@@ -10,18 +10,18 @@ import {
   Tag,
   Modal,
   message,
-  Select,
   Popconfirm,
   InputNumber,
   Switch,
+  Select,
 } from "antd";
 import {
   PlusOutlined,
   UploadOutlined,
   EditOutlined,
   DeleteOutlined,
-  EyeOutlined,
   ShoppingOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import styled from "styled-components";
 import FloatingNav from "../components/FloatingNav";
@@ -55,6 +55,16 @@ const PageHeader = styled.div`
     flex-direction: column;
     gap: 16px;
     text-align: center;
+
+    > div {
+      flex-direction: column;
+      width: 100%;
+      gap: 12px;
+
+      .ant-input-search {
+        width: 100% !important;
+      }
+    }
   }
 `;
 
@@ -170,17 +180,6 @@ const PriceTag = styled.span`
   font-size: 1.1rem;
 `;
 
-const SpecsList = styled.div`
-  .spec-item {
-    background: #f5f5f5;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    margin: 2px;
-    display: inline-block;
-  }
-`;
-
 const StyledModal = styled(Modal)`
   .ant-modal-content {
     border-radius: 16px;
@@ -215,6 +214,8 @@ const RentalAdmin = ({ hideNavFooter = false }) => {
   const [previewImage, setPreviewImage] = useState("");
   const [fileList, setFileList] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [filteredRentals, setFilteredRentals] = useState([]);
 
   // Fetch rental items from API
   const fetchRentals = async () => {
@@ -238,9 +239,11 @@ const RentalAdmin = ({ hideNavFooter = false }) => {
         specification: item.specification,
         included: item.included,
         type: item.type,
+        category: item.type,
       }));
 
       setRentals(transformedItems);
+      setFilteredRentals(transformedItems);
     } catch (error) {
       console.error("Error fetching rental items:", error);
       message.error("Failed to load rental items");
@@ -249,10 +252,57 @@ const RentalAdmin = ({ hideNavFooter = false }) => {
     }
   };
 
+  // Search function
+  const handleSearch = (value) => {
+    setSearchText(value);
+    if (!value) {
+      setFilteredRentals(rentals);
+    } else {
+      const filtered = rentals.filter(
+        (item) =>
+          item.name.toLowerCase().includes(value.toLowerCase()) ||
+          item.type.toLowerCase().includes(value.toLowerCase()) ||
+          (item.category &&
+            item.category.toLowerCase().includes(value.toLowerCase()))
+      );
+      setFilteredRentals(filtered);
+    }
+  };
+
+  // Update filtered results when rentals change
+  React.useEffect(() => {
+    handleSearch(searchText);
+  }, [rentals]);
+
   // Load data on component mount
   React.useEffect(() => {
     fetchRentals();
   }, []);
+
+  // Toggle rental item availability
+  const toggleAvailability = async (id, currentStatus) => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/wedding/toggle-rental-availability/${id}`,
+        {
+          method: "POST",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to toggle availability");
+      }
+
+      const data = await response.json();
+      message.success(data.message);
+
+      // Refresh the rental list to reflect changes
+      await fetchRentals();
+    } catch (error) {
+      console.error("Error toggling availability:", error);
+      message.error("Failed to update availability status");
+    }
+  };
 
   const categories = [
     "camera",
@@ -274,10 +324,11 @@ const RentalAdmin = ({ hideNavFooter = false }) => {
     setUploading(true);
     try {
       const formData = new FormData();
-      formData.append("type", "image");
+      formData.append("type", values.category);
       formData.append("name", values.name);
       formData.append("price", values.price);
       formData.append("period", values.period);
+      formData.append("category", values.category || "");
       formData.append("description", values.description || "");
       formData.append("specification", values.specification || "");
       formData.append("included", values.included || "");
@@ -325,10 +376,10 @@ const RentalAdmin = ({ hideNavFooter = false }) => {
     setUploading(true);
     try {
       const updateData = {
-        type: values.type || "image",
         name: values.name,
         price: values.price,
         period: values.period,
+        type: values.category,
         description: values.description || "",
         specification: values.specification || "",
         included: values.included || "",
@@ -410,6 +461,7 @@ const RentalAdmin = ({ hideNavFooter = false }) => {
       description: rental.description,
       price: rental.price,
       period: rental.period,
+      category: rental.type,
       specification: rental.specification,
       included: rental.included,
     });
@@ -519,6 +571,23 @@ const RentalAdmin = ({ hideNavFooter = false }) => {
       ),
     },
     {
+      title: "Category",
+      dataIndex: "category",
+      key: "category",
+      width: 120,
+      render: (category) => (
+        <Tag
+          color="blue"
+          style={{
+            fontSize: window.innerWidth <= 768 ? "0.7rem" : "0.8rem",
+            padding: "2px 8px",
+          }}
+        >
+          {category || "N/A"}
+        </Tag>
+      ),
+    },
+    {
       title: "Price",
       dataIndex: "price",
       key: "price",
@@ -548,11 +617,33 @@ const RentalAdmin = ({ hideNavFooter = false }) => {
       title: "Status",
       dataIndex: "available",
       key: "available",
-      width: 100,
-      render: (available) => (
-        <Tag color={available ? "green" : "red"} style={{ fontSize: "0.7rem" }}>
-          {available ? "Available" : "Rented"}
-        </Tag>
+      width: 120,
+      render: (available, record) => (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "8px",
+          }}
+        >
+          <Tag
+            color={available ? "green" : "red"}
+            style={{ fontSize: "0.7rem" }}
+          >
+            {available ? "Available" : "Unavailable"}
+          </Tag>
+          <Switch
+            checked={available}
+            onChange={() => toggleAvailability(record.id, available)}
+            checkedChildren="ON"
+            unCheckedChildren="OFF"
+            size="small"
+            style={{
+              backgroundColor: available ? "#52c41a" : "#ff4d4f",
+            }}
+          />
+        </div>
       ),
     },
     {
@@ -600,19 +691,40 @@ const RentalAdmin = ({ hideNavFooter = false }) => {
         <Container>
           <PageHeader>
             <PageTitle>Rental Management</PageTitle>
-            <AddButton
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={handleAddNew}
-            >
-              Add New Item
-            </AddButton>
+            <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
+              <Input.Search
+                placeholder="Search by name or type..."
+                allowClear
+                enterButton={<SearchOutlined />}
+                size="large"
+                style={{ width: 300 }}
+                onSearch={handleSearch}
+                onChange={(e) => handleSearch(e.target.value)}
+                value={searchText}
+              />
+              <AddButton
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={handleAddNew}
+              >
+                Add New Item
+              </AddButton>
+            </div>
           </PageHeader>
 
           <Card>
+            {searchText && (
+              <div
+                style={{ marginBottom: 16, color: "#666", fontSize: "0.9rem" }}
+              >
+                <SearchOutlined style={{ marginRight: 8 }} />
+                Found {filteredRentals.length} of {rentals.length} items
+                matching "{searchText}"
+              </div>
+            )}
             <StyledTable
               columns={columns}
-              dataSource={rentals}
+              dataSource={filteredRentals}
               rowKey="id"
               loading={loading}
               pagination={{
@@ -657,6 +769,27 @@ const RentalAdmin = ({ hideNavFooter = false }) => {
                 rules={[{ required: true, message: "Please enter item name" }]}
               >
                 <Input placeholder="Enter item name" />
+              </Form.Item>
+
+              <Form.Item
+                name="category"
+                label="Category"
+                rules={[
+                  { required: true, message: "Please select a category" },
+                ]}
+              >
+                <Select placeholder="Select equipment category">
+                  <Option value="Camera">Camera</Option>
+                  <Option value="Lens">Lens</Option>
+                  <Option value="Lighting">Lighting Equipment</Option>
+                  <Option value="Audio">Audio Equipment</Option>
+                  <Option value="Tripod">Tripods & Supports</Option>
+                  <Option value="Drone">Drones</Option>
+                  <Option value="Gimbal">Gimbals & Stabilizers</Option>
+                  <Option value="Accessories">Accessories</Option>
+                  <Option value="Background">Backdrops & Props</Option>
+                  <Option value="Memory">Memory & Storage</Option>
+                </Select>
               </Form.Item>
 
               <div style={{ display: "flex", gap: "16px" }}>

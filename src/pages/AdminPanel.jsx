@@ -1,33 +1,34 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   Layout,
   Menu,
   Drawer,
   Button,
-  Avatar,
   Typography,
-  Badge,
-  Tooltip,
   Card,
   Row,
   Col,
+  message,
+  Modal,
 } from "antd";
 import {
-  UserOutlined,
   PictureOutlined,
   VideoCameraOutlined,
   ShoppingOutlined,
   DashboardOutlined,
   MenuOutlined,
-  SettingOutlined,
-  BellOutlined,
   CloseOutlined,
   HomeOutlined,
+  InboxOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
 import styled from "styled-components";
 import PhotoAdmin from "./PhotoAdmin";
 import VideoAdmin from "./VideoAdmin";
 import RentalAdmin from "./RentalAdmin";
+import RentalQueries from "../components/RentalQueries";
 
 const { Header, Content, Sider } = Layout;
 const { Title, Text } = Typography;
@@ -340,66 +341,6 @@ const MobileDrawer = styled(Drawer)`
   }
 `;
 
-const UserInfo = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
-  .user-details {
-    display: flex;
-    flex-direction: column;
-
-    .name {
-      color: #1a1a1a;
-      font-weight: 600;
-      font-size: 14px;
-    }
-
-    .role {
-      color: #666;
-      font-size: 12px;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .user-details {
-      display: none;
-    }
-  }
-`;
-
-const HeaderActions = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  @media (max-width: 768px) {
-    gap: 4px;
-  }
-`;
-
-const ActionButton = styled(Button)`
-  border: none;
-  box-shadow: none;
-  height: 40px;
-  width: 40px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: #f5f5f5;
-    color: #da1701;
-    transform: translateY(-1px);
-  }
-
-  &:focus {
-    box-shadow: none;
-  }
-`;
-
 const BrandLogo = styled.div`
   display: flex;
   align-items: center;
@@ -484,6 +425,8 @@ const AdminPanel = () => {
   const [selectedKey, setSelectedKey] = useState("dashboard");
   const [mobileDrawerVisible, setMobileDrawerVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     const handleResize = () => {
@@ -519,6 +462,11 @@ const AdminPanel = () => {
       icon: <ShoppingOutlined />,
       label: "Rental Management",
     },
+    {
+      key: "rental-queries",
+      icon: <InboxOutlined />,
+      label: "Rental Queries",
+    },
   ];
 
   const dashboardCards = [
@@ -541,6 +489,12 @@ const AdminPanel = () => {
       title: "Rental Management",
       description: "Add and manage camera equipment and rental accessories",
     },
+    {
+      key: "rental-queries",
+      icon: <InboxOutlined />,
+      title: "Rental Booking Queries",
+      description: "View and manage customer rental booking requests",
+    },
   ];
 
   const handleMenuClick = ({ key }) => {
@@ -552,6 +506,20 @@ const AdminPanel = () => {
 
   const handleDashboardCardClick = (key) => {
     setSelectedKey(key);
+  };
+
+  const handleLogout = () => {
+    Modal.confirm({
+      title: "Confirm Logout",
+      content: "Are you sure you want to logout from the admin panel?",
+      okText: "Yes, Logout",
+      cancelText: "Cancel",
+      onOk: () => {
+        dispatch({ type: "adminLogout" });
+        message.success("Logged out successfully");
+        navigate("/admin-login");
+      },
+    });
   };
 
   const getCurrentTitle = () => {
@@ -567,6 +535,8 @@ const AdminPanel = () => {
         return <VideoAdmin hideNavFooter={true} />;
       case "rentals":
         return <RentalAdmin hideNavFooter={true} />;
+      case "rental-queries":
+        return <RentalQueries />;
       default:
         return (
           <DashboardContent>
@@ -614,6 +584,33 @@ const AdminPanel = () => {
       />
 
       <SiderFooter>
+        <Button
+          type="text"
+          icon={<LogoutOutlined />}
+          block
+          danger
+          style={{
+            color: "#ff4d4f",
+            height: "44px",
+            borderRadius: "10px",
+            fontWeight: 500,
+            border: "1px solid #ffccc7",
+            transition: "all 0.3s ease",
+            marginBottom: "12px",
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.borderColor = "#ff4d4f";
+            e.target.style.background = "rgba(255, 77, 79, 0.1)";
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.borderColor = "#ffccc7";
+            e.target.style.background = "transparent";
+          }}
+          onClick={handleLogout}
+        >
+          Logout
+        </Button>
+
         <Button
           type="text"
           icon={<HomeOutlined />}

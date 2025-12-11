@@ -60,6 +60,27 @@ const storeReducer = (state = defaultState, action) => {
     return { ...defaultState };
   }
 
+  if (action.type === "adminLogin") {
+    const data = action.data;
+    const obj = {
+      ...state,
+      isLoggedIn: true,
+      isAdmin: true,
+      adminView: true,
+      userToken: data.token,
+      userName: data.name || "Admin",
+      userEmail: data.email,
+      type: "admin",
+    };
+    localStorage.setItem("state", JSON.stringify(obj));
+    return obj;
+  }
+
+  if (action.type === "adminLogout") {
+    localStorage.clear();
+    return { ...defaultState };
+  }
+
   if (action.type === "addToCart") {
     let amount = 0;
     const product = action.data; // Fixed: was action.product, should be action.data

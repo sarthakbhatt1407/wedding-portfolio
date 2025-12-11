@@ -1,4 +1,3 @@
-import React from "react";
 import { Typography, Carousel, Avatar, Rate } from "antd";
 import styled from "styled-components";
 
@@ -183,33 +182,30 @@ const StyledCarousel = styled(Carousel)`
 `;
 
 const TestimonialsSection = () => {
-  const testimonials = [
+  const reviews = [
     {
-      id: 1,
-      content:
-        "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis vitae feugiat magna, ut mattis ligula praesentium voluptatum deleniti atque corrupti quos et quas molestias excepturi. The photos turned out absolutely stunning!",
-      name: "Gloria & Nate",
-      date: "December 01, 2019",
-      avatar:
-        "https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80",
+      name: "Radha Kahana Pun official",
+      rating: 5,
+      reviewsCount: 1,
+      time: "1 month ago",
+      reviewText:
+        "Rivaaz Films ek super creative & professional team hai! 🎬 Music distribution aur brand promotion ki best service dete hain. Trustworthy, supportive & full of new ideas! Highly recommended! ✨",
     },
     {
-      id: 2,
-      content:
-        "Accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi at vero eos et vitae feugiat magna. Professional and friendly service throughout our special day.",
-      name: "Emma & Mike",
-      date: "November 19, 2019",
-      avatar:
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+      name: "Anil Duriyal",
+      rating: 5,
+      reviewsCount: 1,
+      time: "3 months ago",
+      reviewText:
+        "Rivaaz Films has completely transformed the way I release my music. Their distribution services are fast, efficient, and reach all major platforms seamlessly. The team is supportive, guides you through every step, and ensures your music gets the visibility it deserves. Highly recommended for independent artists looking to grow! ❤️",
     },
     {
-      id: 3,
-      content:
-        "Accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi at vero eos et vitae feugiat magna, ut ligula. Couldn't be happier with the results!",
-      name: "Diana & Georg",
-      date: "October 12, 2019",
-      avatar:
-        "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80",
+      name: "Arjun semliyat",
+      rating: 5,
+      reviewsCount: 1,
+      time: "3 months ago",
+      reviewText:
+        "Rivaaz Films provided an amazing photography experience. The team was professional, punctual, and creative with their shots. Candid moments were beautifully captured, and editing quality was top-notch. Delivery was on time, though pricing felt slightly premium. Overall, a wonderful choice for weddings and events.",
     },
   ];
 
@@ -217,29 +213,25 @@ const TestimonialsSection = () => {
     <TestimonialsContainer>
       <Container>
         <SectionTitle level={2} data-aos="fade-up">
-          Testimonials
+          Client Reviews
         </SectionTitle>
         <SectionSubtitle data-aos="fade-up" data-aos-delay="200">
-          Alienum phaedrum torquatos nec eu, vis detraxit periculis ex, nihil
-          expetendis in mei.
+          What our clients say about us
         </SectionSubtitle>
 
         <div data-aos="fade-up" data-aos-delay="400">
           <StyledCarousel autoplay dots>
-            {testimonials.map((testimonial) => (
-              <div key={testimonial.id}>
+            {reviews.map((review, index) => (
+              <div key={index}>
                 <TestimonialCard>
                   <Rate
                     disabled
-                    defaultValue={5}
+                    defaultValue={review.rating}
                     style={{ color: "#ffd700", marginBottom: "20px" }}
                   />
-                  <TestimonialContent>{testimonial.content}</TestimonialContent>
-                  <TestimonialAvatar src={testimonial.avatar} />
-                  <TestimonialName level={4}>
-                    {testimonial.name}
-                  </TestimonialName>
-                  <TestimonialDate>{testimonial.date}</TestimonialDate>
+                  <TestimonialContent>{review.reviewText}</TestimonialContent>
+                  <TestimonialName level={4}>{review.name}</TestimonialName>
+                  <TestimonialDate>{review.time}</TestimonialDate>
                 </TestimonialCard>
               </div>
             ))}

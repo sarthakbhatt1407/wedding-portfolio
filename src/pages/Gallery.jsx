@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Row, Col, Typography, Tabs, Modal, Spin, message } from "antd";
 import {
   CameraOutlined,
@@ -351,18 +351,6 @@ const VideoOverlay = styled.div`
   }
 `;
 
-const VideoDuration = styled.div`
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
-  background: rgba(0, 0, 0, 0.7);
-  color: #fff;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  font-weight: 500;
-`;
-
 const StyledModal = styled(Modal)`
   .ant-modal-content {
     border-radius: 20px;
@@ -528,16 +516,84 @@ const PhotoCounter = styled.div`
   }
 `;
 
+const CategoryTabsContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 24px 20px;
+  /* background: rgba(255, 255, 255, 0.5); */
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  margin-bottom: 32px;
+  /* box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); */
+
+  @media (max-width: 768px) {
+    gap: 8px;
+    padding: 16px 12px;
+  }
+`;
+
+const CategoryTab = styled.button`
+  padding: 10px 24px;
+  border-radius: 25px;
+  border: 2px solid transparent;
+  background: ${(props) =>
+    props.active
+      ? "linear-gradient(135deg, #da1701, #b81501)"
+      : "rgba(255, 255, 255, 0.8)"};
+  color: ${(props) => (props.active ? "#fff" : "#333")};
+  font-size: 14px;
+  font-weight: ${(props) => (props.active ? "600" : "500")};
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: ${(props) =>
+    props.active
+      ? "0 6px 20px rgba(218, 23, 1, 0.3)"
+      : "0 2px 8px rgba(0, 0, 0, 0.05)"};
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(218, 23, 1, 0.2);
+    border-color: #da1701;
+    color: ${(props) => (props.active ? "#fff" : "#da1701")};
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  @media (max-width: 768px) {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+`;
+
 const Gallery = () => {
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [activeTab, setActiveTab] = useState("photos");
+  const [activeCategory, setActiveCategory] = useState("All");
   const [photoGallery, setPhotoGallery] = useState([]);
   const [videoGallery, setVideoGallery] = useState([]);
+  const [allPhotos, setAllPhotos] = useState([]);
+  const [allVideos, setAllVideos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [slideDirection, setSlideDirection] = useState("next");
   const [isSliding, setIsSliding] = useState(false);
+
+  const categories = [
+    "All",
+    "Wedding",
+    "Pre-Wedding",
+    "Engagement",
+    "Reception",
+    "Bridal Portraits",
+    "Event Photography",
+  ];
 
   // Fetch images from API
   const fetchImages = async () => {
@@ -557,10 +613,15 @@ const Gallery = () => {
         tags: ["Wedding", "Photography"],
         likes: Math.floor(Math.random() * 200) + 50,
         views: Math.floor(Math.random() * 3000) + 1000,
-        category: "wedding",
+        category: item.category,
         createdAt: item.createdAt,
       }));
 
+      console.log(
+        "Photo categories:",
+        transformedImages.map((img) => img.category)
+      );
+      setAllPhotos(transformedImages);
       setPhotoGallery(transformedImages);
     } catch (error) {
       console.error("Error fetching images:", error);
@@ -591,10 +652,15 @@ const Gallery = () => {
         likes: Math.floor(Math.random() * 300) + 100,
         views: Math.floor(Math.random() * 5000) + 2000,
         duration: "3:45",
-        category: "wedding",
+        category: item.category,
         createdAt: item.createdAt,
       }));
 
+      console.log(
+        "Video categories:",
+        transformedVideos.map((vid) => vid.category)
+      );
+      setAllVideos(transformedVideos);
       setVideoGallery(transformedVideos);
     } catch (error) {
       console.error("Error fetching videos:", error);
@@ -612,6 +678,23 @@ const Gallery = () => {
       fetchVideos();
     }
   }, [activeTab]);
+
+  // Filter gallery items based on selected category
+  useEffect(() => {
+    if (activeCategory === "All") {
+      setPhotoGallery(allPhotos);
+      setVideoGallery(allVideos);
+    } else {
+      const filteredPhotos = allPhotos.filter(
+        (photo) => photo.category?.trim() === activeCategory.trim()
+      );
+      const filteredVideos = allVideos.filter(
+        (video) => video.category?.trim() === activeCategory.trim()
+      );
+      setPhotoGallery(filteredPhotos);
+      setVideoGallery(filteredVideos);
+    }
+  }, [activeCategory, allPhotos, allVideos]);
 
   const showFullscreen = (item, type, index = 0) => {
     if (type === "photo") {
@@ -697,9 +780,9 @@ const Gallery = () => {
     }
 
     return (
-      <Row gutter={[15, 15]}>
+      <Row gutter={[24, 24]}>
         {photoGallery.map((photo, index) => (
-          <Col xs={12} sm={8} md={6} lg={4} key={photo.id}>
+          <Col xs={12} sm={8} md={12} lg={8} key={photo.id}>
             <GalleryItem onClick={() => showFullscreen(photo, "photo", index)}>
               <img
                 alt={photo.title}
@@ -804,6 +887,17 @@ const Gallery = () => {
               }
               key="photos"
             >
+              <CategoryTabsContainer>
+                {categories.map((category) => (
+                  <CategoryTab
+                    key={category}
+                    active={activeCategory === category}
+                    onClick={() => setActiveCategory(category)}
+                  >
+                    {category}
+                  </CategoryTab>
+                ))}
+              </CategoryTabsContainer>
               {renderPhotoGrid()}
             </TabPane>
             <TabPane
@@ -815,6 +909,18 @@ const Gallery = () => {
               }
               key="videos"
             >
+              <CategoryTabsContainer>
+                {categories.map((category) => (
+                  <CategoryTab
+                    key={category}
+                    active={activeCategory === category}
+                    onClick={() => setActiveCategory(category)}
+                  >
+                    {category}
+                  </CategoryTab>
+                ))}
+              </CategoryTabsContainer>
+
               {renderVideoGrid()}
             </TabPane>
           </StyledTabs>

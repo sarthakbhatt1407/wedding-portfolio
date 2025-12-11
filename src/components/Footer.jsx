@@ -3,7 +3,6 @@ import { Row, Col, Typography, Space, Button, Input, Form } from "antd";
 import {
   FacebookOutlined,
   InstagramOutlined,
-  TwitterOutlined,
   YoutubeOutlined,
   MailOutlined,
   PhoneOutlined,
@@ -67,7 +66,7 @@ const FooterTitle = styled(Title)`
       left: 0;
       width: 50px;
       height: 3px;
-      background: linear-gradient(45deg, #da1701, #b81501);
+      background: linear-gradient(45deg, #667eea, #764ba2);
       border-radius: 2px;
     }
   }
@@ -90,12 +89,12 @@ const ContactInfo = styled.div`
   transition: all 0.3s ease;
 
   &:hover {
-    color: #da1701;
+    color: #667eea;
     transform: translateX(5px);
   }
 
   .anticon {
-    color: #da1701;
+    color: #667eea;
     font-size: 1.2rem;
   }
 `;
@@ -121,10 +120,10 @@ const SocialButton = styled(Button)`
 
     &:hover {
       transform: translateY(-5px) scale(1.1);
-      border-color: #da1701;
-      background: rgba(218, 23, 1, 0.2);
+      border-color: #667eea;
+      background: rgba(102, 126, 234, 0.2);
       color: #fff;
-      box-shadow: 0 10px 30px rgba(218, 23, 1, 0.3);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
     }
 
     &.facebook:hover {
@@ -137,12 +136,6 @@ const SocialButton = styled(Button)`
       border-color: #e4405f;
       background: rgba(228, 64, 95, 0.2);
       box-shadow: 0 10px 30px rgba(228, 64, 95, 0.3);
-    }
-
-    &.twitter:hover {
-      border-color: #1da1f2;
-      background: rgba(29, 161, 242, 0.2);
-      box-shadow: 0 10px 30px rgba(29, 161, 242, 0.3);
     }
 
     &.youtube:hover {
@@ -172,15 +165,15 @@ const NewsletterInput = styled(Input)`
 
     &:hover,
     &:focus {
-      border-color: #da1701;
-      box-shadow: 0 0 15px rgba(218, 23, 1, 0.3);
+      border-color: #667eea;
+      box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
     }
   }
 `;
 
 const SubscribeButton = styled(Button)`
   &.ant-btn {
-    background: linear-gradient(45deg, #da1701, #b81501);
+    background: linear-gradient(45deg, #667eea, #764ba2);
     border: none;
     color: #fff;
     border-radius: 25px;
@@ -206,9 +199,10 @@ const QuickLink = styled.a`
   padding: 8px 0;
   transition: all 0.3s ease;
   position: relative;
+  cursor: pointer;
 
   &:hover {
-    color: #da1701;
+    color: #667eea;
     transform: translateX(10px);
 
     &::before {
@@ -224,7 +218,7 @@ const QuickLink = styled.a`
     transform: translateY(-50%);
     width: 0;
     height: 2px;
-    background: #da1701;
+    background: #667eea;
     transition: width 0.3s ease;
   }
 `;
@@ -258,11 +252,11 @@ const BackToTop = styled(Button)`
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: linear-gradient(45deg, #da1701, #b81501);
+    background: linear-gradient(45deg, #667eea, #764ba2);
     border: none;
     color: #fff;
     font-size: 1.2rem;
-    box-shadow: 0 8px 25px rgba(218, 23, 1, 0.3);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
     transition: all 0.3s ease;
     z-index: 1000;
 
@@ -285,24 +279,31 @@ const Footer = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const scrollToSection = (sectionId) => {
+    const element = document.querySelector(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   const quickLinks = [
-    "About Us",
-    "Our Services",
-    "Portfolio",
-    "Wedding Packages",
-    "Contact Info",
-    "Privacy Policy",
-    "Terms of Service",
+    { name: "About Us", section: "#about" },
+    { name: "Our Services", section: "#services" },
+    { name: "Portfolio", section: "#portfolio" },
+    { name: "Wedding Packages", section: "#services" },
+    { name: "Contact Info", section: "#contact" },
+    { name: "Team", section: "#team" },
+    { name: "Testimonials", section: "#testimonials" },
   ];
 
   const services = [
-    "Wedding Photography",
-    "Engagement Shoots",
-    "Bridal Portraits",
-    "Event Photography",
-    "Photo Editing",
-    "Wedding Albums",
-    "Video Production",
+    { name: "Wedding Photography", section: "#services" },
+    { name: "Engagement Shoots", section: "#portfolio" },
+    { name: "Bridal Portraits", section: "#portfolio" },
+    { name: "Event Photography", section: "#services" },
+    { name: "Photo Editing", section: "#services" },
+    { name: "Wedding Albums", section: "#portfolio" },
+    { name: "Video Production", section: "#services" },
   ];
 
   return (
@@ -313,7 +314,7 @@ const Footer = () => {
             <Row gutter={[40, 40]}>
               <Col xs={24} sm={12} lg={6}>
                 <div data-aos="fade-up">
-                  <FooterTitle level={3}>Solène Studio</FooterTitle>
+                  <FooterTitle level={3}>Rivaaz Films</FooterTitle>
                   <FooterText>
                     We capture the magic of your special day with artistic
                     vision and professional expertise. Every moment becomes a
@@ -324,26 +325,29 @@ const Footer = () => {
                     <SocialButton
                       className="facebook"
                       icon={<FacebookOutlined />}
+                      href="https://www.facebook.com/rivaazfilms/"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       data-aos="zoom-in"
                       data-aos-delay="100"
                     />
                     <SocialButton
                       className="instagram"
                       icon={<InstagramOutlined />}
+                      href="https://www.instagram.com/rivaazfilms/"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       data-aos="zoom-in"
                       data-aos-delay="200"
                     />
                     <SocialButton
-                      className="twitter"
-                      icon={<TwitterOutlined />}
-                      data-aos="zoom-in"
-                      data-aos-delay="300"
-                    />
-                    <SocialButton
                       className="youtube"
                       icon={<YoutubeOutlined />}
+                      href="https://www.youtube.com/@rivaazfilms837"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       data-aos="zoom-in"
-                      data-aos-delay="400"
+                      data-aos-delay="300"
                     />
                   </Space>
                 </div>
@@ -355,11 +359,11 @@ const Footer = () => {
                   {quickLinks.map((link, index) => (
                     <QuickLink
                       key={index}
-                      href="#"
+                      onClick={() => scrollToSection(link.section)}
                       data-aos="fade-up"
                       data-aos-delay={150 + index * 50}
                     >
-                      {link}
+                      {link.name}
                     </QuickLink>
                   ))}
                 </div>
@@ -371,11 +375,11 @@ const Footer = () => {
                   {services.map((service, index) => (
                     <QuickLink
                       key={index}
-                      href="#"
+                      onClick={() => scrollToSection(service.section)}
                       data-aos="fade-up"
                       data-aos-delay={250 + index * 50}
                     >
-                      {service}
+                      {service.name}
                     </QuickLink>
                   ))}
                 </div>
@@ -387,20 +391,23 @@ const Footer = () => {
 
                   <ContactInfo data-aos="fade-up" data-aos-delay="350">
                     <EnvironmentOutlined />
-                    <span>123 Wedding Street, Love City, LC 12345</span>
+                    <span>
+                      Tarun Vihar Lane 4, mothrowala road, banjarawla, near
+                      sidheshwar temple
+                    </span>
                   </ContactInfo>
 
                   <ContactInfo data-aos="fade-up" data-aos-delay="400">
                     <PhoneOutlined />
-                    <span>+1 (555) 123-4567</span>
+                    <span>+91 8126770620</span>
                   </ContactInfo>
 
                   <ContactInfo data-aos="fade-up" data-aos-delay="450">
                     <MailOutlined />
-                    <span>hello@solenestudio.com</span>
+                    <span>rivaazfilm@gmail.com</span>
                   </ContactInfo>
 
-                  <NewsletterForm data-aos="fade-up" data-aos-delay="500">
+                  {/* <NewsletterForm data-aos="fade-up" data-aos-delay="500">
                     <FooterText>Subscribe to our newsletter</FooterText>
                     <Form>
                       <NewsletterInput
@@ -409,7 +416,7 @@ const Footer = () => {
                       />
                       <SubscribeButton block>Subscribe</SubscribeButton>
                     </Form>
-                  </NewsletterForm>
+                  </NewsletterForm> */}
                 </div>
               </Col>
             </Row>
@@ -417,8 +424,7 @@ const Footer = () => {
 
           <FooterBottom data-aos="fade-up" data-aos-delay="600">
             <CopyrightText>
-              © 2024 Solène Photography Studio. Made with <HeartIcon /> for
-              couples in love.
+              © 2025 Rivaaz Films. Made with <HeartIcon /> for couples in love.
             </CopyrightText>
           </FooterBottom>
         </FooterContent>

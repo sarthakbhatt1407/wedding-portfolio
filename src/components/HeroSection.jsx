@@ -92,7 +92,7 @@ const SlideBackground = styled.div`
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
-    opacity: 0;
+    opacity: 0.8;
   }
 
   @media (max-width: 768px) {
@@ -482,7 +482,7 @@ const HeroSection = () => {
     {
       id: 1,
       background:
-        "https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+        "https://images.unsplash.com/photo-1597157639073-69284dc0fdaf?q=80&w=1748&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       floatingText: "Made with Love",
       title: "Authentic Wedding Photography",
       subtitle:
@@ -491,7 +491,7 @@ const HeroSection = () => {
     {
       id: 2,
       background:
-        "https://images.unsplash.com/photo-1583939003579-730e3918a45a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+        "https://images.unsplash.com/photo-1587271636175-90d58cdad458?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       floatingText: "Forever Moments",
       title: "Cinematic Love Stories",
       subtitle:
@@ -500,7 +500,7 @@ const HeroSection = () => {
     {
       id: 3,
       background:
-        "https://images.unsplash.com/photo-1594736797933-d0701ba50168?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+        "https://plus.unsplash.com/premium_photo-1670524465634-93cf255ffa8b?q=80&w=2954&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       floatingText: "Pure Elegance",
       title: "Timeless Wedding Portraits",
       subtitle:
@@ -554,27 +554,27 @@ const HeroSection = () => {
         <span>{String(slides.length).padStart(2, "0")}</span>
       </SlideCounter>
 
-      <FloatingText key={`floating-${currentSlide}`} delay="0.5s">
+      {/* <FloatingText key={`floating-${currentSlide}`} delay="0.5s">
         {currentSlideData.floatingText}
-      </FloatingText>
+      </FloatingText> */}
 
       <HeroContent>
-        <MainTitle level={1} key={`title-${currentSlide}`} delay="0.8s">
+        {/* <MainTitle level={1} key={`title-${currentSlide}`} delay="0.8s">
           {currentSlideData.title}
         </MainTitle>
 
         <SubTitle key={`subtitle-${currentSlide}`} delay="1.2s">
           {currentSlideData.subtitle}
-        </SubTitle>
+        </SubTitle> */}
 
-        <ButtonGroup size="large" key={`buttons-${currentSlide}`} delay="1.6s">
+        {/* <ButtonGroup size="large" key={`buttons-${currentSlide}`} delay="1.6s">
           <StyledButton size="large" className="primary">
             View Portfolio
           </StyledButton>
           <StyledButton size="large" icon={<PlayCircleOutlined />}>
             Play Video
           </StyledButton>
-        </ButtonGroup>
+        </ButtonGroup> */}
       </HeroContent>
 
       <SliderNavigation>

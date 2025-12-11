@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Row,
   Col,
@@ -183,7 +183,7 @@ const PlanPrice = styled.div`
   font-weight: 700;
   color: #da1701;
   margin-bottom: 5px;
-  font-family: "Playfair Display", serif;
+
   line-height: 1.1;
 
   span {
@@ -441,24 +441,57 @@ const SubmitButton = styled(Button)`
 
 const PricingSection = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState("");
+  const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
-  const showModal = () => {
+  const showModal = (planName) => {
+    setSelectedPlan(planName);
     setIsModalVisible(true);
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
+    setSelectedPlan("");
     form.resetFields();
   };
 
-  const handleSubmit = (values) => {
-    console.log("Custom Plan Form Data:", values);
+  const handleSubmit = async (values) => {
+    setLoading(true);
     message.success(
       "Your custom plan request has been submitted successfully!"
     );
     setIsModalVisible(false);
+    setSelectedPlan("");
     form.resetFields();
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/user/send-custom-plan-email`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...values,
+            plan: selectedPlan,
+            bookingDate: values.bookingDate?.format("YYYY-MM-DD"),
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.sent) {
+      } else {
+        message.error(data.message || "Failed to send request");
+      }
+    } catch (error) {
+      message.error("Unable to send request. Please try again.");
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const weddingPackages = [
@@ -603,7 +636,7 @@ const PricingSection = () => {
                           ? "custom-btn"
                           : ""
                       }
-                      onClick={showModal}
+                      onClick={() => showModal(pkg.name)}
                     >
                       {pkg.isCustom ? "Customize Now" : "Book This Package"}
                     </PricingButton>
@@ -719,7 +752,9 @@ const PricingSection = () => {
             </Form.Item>
 
             <Form.Item>
-              <SubmitButton htmlType="submit">Submit Request</SubmitButton>
+              <SubmitButton htmlType="submit" loading={loading}>
+                Submit Request
+              </SubmitButton>
             </Form.Item>
           </StyledForm>
         </StyledModal>

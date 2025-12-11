@@ -1,13 +1,26 @@
 import { useState, useEffect } from "react";
-import { Card, Button, Upload, Modal, message, Popconfirm, Spin } from "antd";
+import {
+  Card,
+  Button,
+  Upload,
+  Modal,
+  message,
+  Popconfirm,
+  Spin,
+  Select,
+  Form,
+} from "antd";
 import {
   PlusOutlined,
   DeleteOutlined,
   CameraOutlined,
 } from "@ant-design/icons";
 import styled from "styled-components";
+import imageCompression from "browser-image-compression";
 import FloatingNav from "../components/FloatingNav";
 import Footer from "../components/Footer";
+
+const { Option } = Select;
 
 const AdminContainer = styled.div`
   padding: ${(props) => (props.hideNavFooter ? "40px 0" : "120px 0 60px 0")};
@@ -195,6 +208,17 @@ const PhotoAdmin = ({ hideNavFooter = false }) => {
   const [uploading, setUploading] = useState(false);
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
   const [fileList, setFileList] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [form] = Form.useForm();
+
+  const categories = [
+    "Wedding",
+    "Pre-Wedding",
+    "Engagement",
+    "Reception",
+    "Bridal Portraits",
+    "Event Photography",
+  ];
 
   // Fetch photos from API
   const fetchPhotos = async () => {
@@ -235,41 +259,71 @@ const PhotoAdmin = ({ hideNavFooter = false }) => {
       return;
     }
 
+    if (!selectedCategory) {
+      message.warning("Please select a category");
+      return;
+    }
+
     setUploading(true);
 
-    const newPhotos = fileList.map((file) => ({
-      id: Date.now() + Math.random(),
-      image: file.url || URL.createObjectURL(file.originFileObj),
-      createdAt: new Date().toISOString().split("T")[0],
-      originFileObj: file.originFileObj,
-    }));
-
     let successCount = 0;
-    for (let photo of newPhotos) {
-      const formData = new FormData();
-      formData.append("type", "image");
-      formData.append("image", photo.originFileObj);
+    let failedCount = 0;
 
+    for (let file of fileList) {
       try {
-        await fetch(`${process.env.REACT_APP_BASE_URL}/wedding/add-gallery`, {
-          method: "POST",
-          body: formData,
-        });
-        successCount++;
+        // Compress image before uploading
+        const options = {
+          maxSizeMB: 0.2, // Target 200KB
+          maxWidthOrHeight: 1920, // Max dimension
+          useWebWorker: true,
+          fileType: "image/jpeg", // Convert to JPEG for better compression
+        };
+
+        const compressedFile = await imageCompression(
+          file.originFileObj,
+          options
+        );
+
+        // Create FormData and upload
+        const formData = new FormData();
+        formData.append("type", "image");
+        formData.append("category", selectedCategory);
+        formData.append("image", compressedFile, file.name);
+
+        const response = await fetch(
+          `${process.env.REACT_APP_BASE_URL}/wedding/add-gallery`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        if (response.ok) {
+          successCount++;
+        } else {
+          failedCount++;
+        }
       } catch (err) {
-        // Optionally handle error for each photo
-        console.error("Upload failed for photo:", photo.id, err);
+        console.error("Upload failed for photo:", file.name, err);
+        failedCount++;
       }
     }
 
     setUploading(false);
     setUploadModalVisible(false);
     setFileList([]);
-    message.success(`${successCount} photo(s) uploaded successfully!`);
+    setSelectedCategory("");
+    form.resetFields();
 
-    // Refresh photos after upload
     if (successCount > 0) {
+      message.success(
+        `${successCount} photo(s) uploaded successfully!${
+          failedCount > 0 ? ` ${failedCount} failed.` : ""
+        }`
+      );
       fetchPhotos();
+    } else {
+      message.error("All uploads failed. Please try again.");
     }
   };
 
@@ -396,6 +450,8 @@ const PhotoAdmin = ({ hideNavFooter = false }) => {
             onCancel={() => {
               setUploadModalVisible(false);
               setFileList([]);
+              setSelectedCategory("");
+              form.resetFields();
             }}
             footer={[
               <Button
@@ -403,6 +459,8 @@ const PhotoAdmin = ({ hideNavFooter = false }) => {
                 onClick={() => {
                   setUploadModalVisible(false);
                   setFileList([]);
+                  setSelectedCategory("");
+                  form.resetFields();
                 }}
               >
                 Cancel
@@ -412,6 +470,7 @@ const PhotoAdmin = ({ hideNavFooter = false }) => {
                 type="primary"
                 loading={uploading}
                 onClick={handleUploadComplete}
+                disabled={!selectedCategory || fileList.length === 0}
                 style={{
                   background: "linear-gradient(135deg, #DA1701, #B81501)",
                   border: "none",
@@ -424,6 +483,30 @@ const PhotoAdmin = ({ hideNavFooter = false }) => {
             ]}
             width={700}
           >
+            <Form form={form} layout="vertical" style={{ marginTop: 20 }}>
+              <Form.Item
+                label="Category"
+                name="category"
+                rules={[
+                  { required: true, message: "Please select a category" },
+                ]}
+              >
+                <Select
+                  placeholder="Select photo category"
+                  value={selectedCategory}
+                  onChange={setSelectedCategory}
+                  size="large"
+                  style={{ width: "100%" }}
+                >
+                  {categories.map((category) => (
+                    <Option key={category} value={category}>
+                      {category}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Form>
+
             <div style={{ marginTop: 20 }}>
               <Upload
                 listType="picture-card"
@@ -464,6 +547,11 @@ const PhotoAdmin = ({ hideNavFooter = false }) => {
                 >
                   <strong>Selected:</strong> {fileList.length} photo(s) ready to
                   upload
+                  {selectedCategory && (
+                    <span style={{ marginLeft: 8 }}>
+                      | Category: <strong>{selectedCategory}</strong>
+                    </span>
+                  )}
                 </div>
               )}
             </div>

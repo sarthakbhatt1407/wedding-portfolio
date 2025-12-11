@@ -1,4 +1,3 @@
-import React from "react";
 import { Row, Col, Typography, Card, Space, Button } from "antd";
 import {
   FacebookOutlined,

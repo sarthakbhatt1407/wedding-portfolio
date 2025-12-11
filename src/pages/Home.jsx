@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -12,7 +12,7 @@ import VideoSection from "../components/VideoSection";
 import TeamSection from "../components/TeamSection";
 import ServicesSection from "../components/ServicesSection";
 import TestimonialsSection from "../components/TestimonialsSection";
-import BlogSection from "../components/BlogSection";
+
 import PricingSection from "../components/PricingSection";
 import ContactSection from "../components/ContactSection";
 import InstagramSection from "../components/InstagramSection";
@@ -91,22 +91,22 @@ const Home = () => {
       <section id="portfolio" data-aos="fade-up" data-aos-delay="100">
         <PortfolioSection />
       </section>
-      <div data-aos="fade-up" data-aos-delay="200">
+      {/* <div data-aos="fade-up" data-aos-delay="200">
         <VideoSection />
-      </div>
-
+      </div> */}
+      {/* 
       <section id="team" data-aos="fade-up" data-aos-delay="200">
         <TeamSection />
-      </section>
+      </section> */}
       <section id="services" data-aos="fade-up" data-aos-delay="100">
         <ServicesSection />
       </section>
       <section id="testimonials" data-aos="fade-up" data-aos-delay="200">
         <TestimonialsSection />
       </section>
-      <div data-aos="fade-up" data-aos-delay="100">
+      {/* <div data-aos="fade-up" data-aos-delay="100">
         <BlogSection />
-      </div>
+      </div> */}
       <div data-aos="fade-up" data-aos-delay="200">
         <PricingSection />
       </div>

@@ -1,10 +1,11 @@
-import { Row, Col, Typography, Form, Input, Button } from "antd";
+import { Row, Col, Typography, Form, Input, Button, message } from "antd";
 import {
   MailOutlined,
   PhoneOutlined,
   EnvironmentOutlined,
 } from "@ant-design/icons";
 import styled from "styled-components";
+import { useState } from "react";
 
 const { Title, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -155,9 +156,39 @@ const SubmitButton = styled(Button)`
 `;
 
 const ContactSection = () => {
-  const onFinish = (values) => {
-    console.log("Form values:", values);
-    // Handle form submission here
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+
+  const onFinish = async (values) => {
+    setLoading(true);
+    message.success("Your message has been sent successfully!");
+    setLoading(false);
+    form.resetFields();
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/user/send-contact-email`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        }
+      );
+
+      const data = await response.json();
+      console.log(data);
+
+      if (data.sent) {
+      } else {
+        message.error(data.message || "Failed to send message");
+      }
+    } catch (error) {
+      message.error("Unable to send message. Please try again.");
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -178,9 +209,9 @@ const ContactSection = () => {
                 <ContactText>
                   <h4>Our Studio</h4>
                   <p>
-                    123 Photography Street
+                    Tarun Vihar Lane 4, mothrowala road
                     <br />
-                    New York, NY 10001
+                    banjarawla, near sidheshwar temple
                   </p>
                 </ContactText>
               </ContactItem>
@@ -191,11 +222,7 @@ const ContactSection = () => {
                 </ContactIcon>
                 <ContactText>
                   <h4>Call Us</h4>
-                  <p>
-                    +1 (555) 123-4567
-                    <br />
-                    +1 (555) 987-6543
-                  </p>
+                  <p>+91 8126770620</p>
                 </ContactText>
               </ContactItem>
 
@@ -205,11 +232,7 @@ const ContactSection = () => {
                 </ContactIcon>
                 <ContactText>
                   <h4>Email Us</h4>
-                  <p>
-                    hello@weddingphoto.com
-                    <br />
-                    info@weddingphoto.com
-                  </p>
+                  <p>rivaazfilm@gmail.com</p>
                 </ContactText>
               </ContactItem>
             </ContactInfo>
@@ -253,22 +276,17 @@ const ContactSection = () => {
               </Row>
 
               <Form.Item
-                name="email"
-                label="Email Address"
+                name="phone"
+                label="Phone Number"
                 rules={[
-                  { required: true, message: "Please enter your email" },
-                  { type: "email", message: "Please enter a valid email" },
+                  { required: true, message: "Please enter your phone number" },
+                  {
+                    pattern: /^[0-9]{10}$/,
+                    message: "Please enter a valid 10-digit phone number",
+                  },
                 ]}
               >
-                <StyledInput placeholder="john@example.com" />
-              </Form.Item>
-
-              <Form.Item
-                name="subject"
-                label="Subject"
-                rules={[{ required: true, message: "Please enter a subject" }]}
-              >
-                <StyledInput placeholder="Wedding Photography Inquiry" />
+                <StyledInput placeholder="+91 9876543210" />
               </Form.Item>
 
               <Form.Item
@@ -285,7 +303,12 @@ const ContactSection = () => {
               </Form.Item>
 
               <Form.Item>
-                <SubmitButton type="primary" htmlType="submit" size="large">
+                <SubmitButton
+                  type="primary"
+                  htmlType="submit"
+                  size="large"
+                  loading={loading}
+                >
                   Send Message
                 </SubmitButton>
               </Form.Item>

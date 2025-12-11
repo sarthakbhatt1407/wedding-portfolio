@@ -1,4 +1,3 @@
-import React from "react";
 import { Row, Col, Typography, Card, Button } from "antd";
 import {
   CameraOutlined,
@@ -166,25 +165,29 @@ const ServiceCard = styled(Card)`
     }
 
     .ant-card-body {
-      padding: 50px 30px;
+      padding: 40px 25px;
       height: 100%;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+
+      @media (max-width: 768px) {
+        padding: 30px 20px;
+      }
     }
   }
 `;
 
 const ServiceIcon = styled.div`
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   background: linear-gradient(135deg, #da1701, #b81501);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 30px;
-  font-size: 2.5rem;
+  margin: 0 auto 25px;
+  font-size: 2rem;
   color: #fff;
   transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
   position: relative;
@@ -213,6 +216,13 @@ const ServiceIcon = styled.div`
       transform: scale(1.1);
     }
   }
+
+  @media (max-width: 768px) {
+    width: 70px;
+    height: 70px;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+  }
 `;
 
 const ServiceContent = styled.div`
@@ -224,12 +234,16 @@ const ServiceContent = styled.div`
 
 const ServiceTitle = styled(Title)`
   &.ant-typography {
-    font-size: 1.6rem !important;
-    margin-bottom: 20px !important;
+    font-size: 1.5rem !important;
+    margin-bottom: 15px !important;
     color: #2c3e50 !important;
     font-weight: 600 !important;
     font-family: "Playfair Display", serif !important;
     transition: color 0.3s ease;
+
+    @media (max-width: 768px) {
+      font-size: 1.3rem !important;
+    }
   }
 
   ${ServiceCard}:hover & {
@@ -240,11 +254,16 @@ const ServiceTitle = styled(Title)`
 const ServiceDescription = styled(Paragraph)`
   &.ant-typography {
     color: #7f8c8d;
-    line-height: 1.8;
-    margin-bottom: 30px !important;
-    font-size: 1.05rem;
+    line-height: 1.7;
+    margin-bottom: 20px !important;
+    font-size: 0.95rem;
     flex: 1;
     transition: color 0.3s ease;
+
+    @media (max-width: 768px) {
+      font-size: 0.9rem;
+      margin-bottom: 15px !important;
+    }
   }
 
   ${ServiceCard}:hover & {
@@ -255,26 +274,31 @@ const ServiceDescription = styled(Paragraph)`
 const ServiceFeatures = styled.ul`
   list-style: none;
   padding: 0;
-  margin: 20px 0 30px;
+  margin: 15px 0 25px;
 
   li {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     color: #666;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     transition: all 0.3s ease;
 
     .anticon {
       color: #da1701;
-      margin-right: 10px;
-      font-size: 1rem;
+      margin-right: 8px;
+      font-size: 0.95rem;
     }
 
     &:hover {
       color: #333;
       transform: translateX(5px);
+    }
+
+    @media (max-width: 768px) {
+      font-size: 0.85rem;
+      margin-bottom: 6px;
     }
   }
 `;
@@ -334,36 +358,80 @@ const ServiceButton = styled(Button)`
 `;
 
 const ServicesSection = () => {
-  const services = [
-    {
+  const services = {
+    weddingPhotography: {
       icon: <CameraOutlined />,
       title: "Wedding Photography",
       description:
-        "Professional wedding photography capturing every precious moment with artistic vision and technical expertise.",
-      features: ["High-Resolution Images", "Digital Gallery", "Print Package"],
+        "Capture every precious moment of your special day with our expert wedding photography services.",
+      offerings: [
+        "Pre-wedding shoots",
+        "Ceremony coverage",
+        "Reception photography",
+        "Photo albums",
+      ],
     },
-    {
+    cinematicVideography: {
       icon: <VideoCameraOutlined />,
-      title: "Cinematic Films",
+      title: "Cinematic Videography",
       description:
-        "Cinematic wedding videos that tell your unique love story through beautiful imagery and emotional storytelling.",
-      features: ["4K Video Quality", "Drone Footage", "Same-Day Highlight"],
+        "Transform your events into cinematic masterpieces with stunning video production.",
+      offerings: [
+        "4K/8K video",
+        "Drone footage",
+        "Highlight reels",
+        "Full event coverage",
+      ],
     },
-    {
-      icon: <HeartOutlined />,
-      title: "Engagement Sessions",
-      description:
-        "Romantic engagement photography sessions to celebrate your love and create beautiful memories.",
-      features: ["Location Flexibility", "Outfit Changes", "Online Gallery"],
-    },
-    {
+    corporateEvents: {
       icon: <StarOutlined />,
-      title: "Event Planning",
+      title: "Corporate Events",
       description:
-        "Complete event planning and coordination services to make your wedding day seamless and stress-free.",
-      features: ["Full Coordination", "Vendor Management", "Timeline Creation"],
+        "Professional coverage for corporate events, conferences, and business occasions.",
+      offerings: [
+        "Event documentation",
+        "Brand storytelling",
+        "Promotional videos",
+        "Live streaming",
+      ],
     },
-  ];
+    preWeddingFilms: {
+      icon: <HeartOutlined />,
+      title: "Pre-Wedding Films",
+      description:
+        "Create magical pre-wedding stories that showcase your unique love journey.",
+      offerings: [
+        "Creative concepts",
+        "Location scouting",
+        "Cinematic editing",
+        "Music integration",
+      ],
+    },
+    musicVideos: {
+      icon: <VideoCameraOutlined />,
+      title: "Music Videos",
+      description:
+        "Professional music video production with creative direction and post-production.",
+      offerings: [
+        "Concept development",
+        "Choreography support",
+        "Color grading",
+        "VFX integration",
+      ],
+    },
+    portraitSessions: {
+      icon: <CameraOutlined />,
+      title: "Portrait Sessions",
+      description:
+        "Elegant portrait photography for individuals, families, and professionals.",
+      offerings: [
+        "Studio sessions",
+        "Outdoor shoots",
+        "Professional editing",
+        "Digital delivery",
+      ],
+    },
+  };
 
   return (
     <ServicesContainer>
@@ -378,9 +446,9 @@ const ServicesSection = () => {
           artistry and attention to detail.
         </SectionSubtitle>
 
-        <Row gutter={[40, 40]}>
-          {services.map((service, index) => (
-            <Col xs={24} sm={12} lg={6} key={index}>
+        <Row gutter={[30, 30]}>
+          {Object.values(services).map((service, index) => (
+            <Col xs={24} sm={12} md={12} lg={8} key={index}>
               <ServiceCard
                 data-aos="fade-up"
                 data-aos-delay={100 * (index + 1)}
@@ -394,10 +462,10 @@ const ServicesSection = () => {
                       {service.description}
                     </ServiceDescription>
                     <ServiceFeatures>
-                      {service.features.map((feature, featureIndex) => (
-                        <li key={featureIndex}>
+                      {service.offerings.map((offering, offeringIndex) => (
+                        <li key={offeringIndex}>
                           <CheckCircleOutlined />
-                          {feature}
+                          {offering}
                         </li>
                       ))}
                     </ServiceFeatures>
